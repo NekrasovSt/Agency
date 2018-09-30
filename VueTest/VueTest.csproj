@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Agency.Web</AssemblyName>
+    <RootNamespace>Agency.Web</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot"/>
+    <Folder Include="wwwroot\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Microsoft.AspNetCore.OData">
+      <Version>7.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices">
+      <Version>2.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\static\**"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="wwwroot\static\**"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="wwwroot\static\**"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\static\**"/>
+    <Content Remove="wwwroot\app.js"/>
+    <Content Remove="wwwroot\index.html"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\static\css\app.30790115300ab27614ce176899523b62.css"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\css\app.30790115300ab27614ce176899523b62.css.map"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\app.b22ce679862c47a75225.js"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\app.b22ce679862c47a75225.js.map"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\manifest.2ae2e69a05c33dfc65f8.js"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\manifest.2ae2e69a05c33dfc65f8.js.map"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\vendor.2420502e2b2c7f321d64.js"/>
+    <_ContentIncludedByDefault Remove="wwwroot\static\js\vendor.2420502e2b2c7f321d64.js.map"/>
+  </ItemGroup>
+
+</Project>
