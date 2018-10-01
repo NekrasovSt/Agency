@@ -17,7 +17,7 @@ export default new Router({
       component: EditObject
     },
     {
-      path: '/object-list/:type',
+      path: '/object-list/:type?',
       name: 'objectList',
       component: ObjectList
     },

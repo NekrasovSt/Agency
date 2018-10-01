@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import axios from 'axios';
 
   export default {
     name: 'EditObject',
@@ -53,8 +53,8 @@
         cities: [],
         streets: [],
         buildings: [],
-        floor: null
-      }
+        floor: null,
+      };
     },
     computed: {
       regionSelected() {
@@ -68,51 +68,48 @@
       },
       buildingSelected() {
         return !!this.currentBuilding;
-      }
+      },
     },
     methods: {
       onRegionSearch(search, loading) {
         loading(true);
-        axios.get(`api/Address/GetRegion?query=${search}`).then(response = > {
+        axios.get(`api/Address/GetRegion?query=${search}`).then(response => {
           this.regions = response.data.result;
-      }).
-        finally(() = > {
-          loading(false;
-      )
-      })
+        }).
+          finally(() => {
+            loading(false);
+          });
       },
       onCitySearch(search, loading) {
         loading(true);
-        axios.get(`api/Address/GetCity?query=${search}&parentId=${this.currentRegion.id}`).then(response = > {
+        axios.get(`api/Address/GetCity?query=${search}&parentId=${this.currentRegion.id}`).then(response => {
           this.cities = response.data.result;
-      }).
-        finally(() = > {
-          loading(false;
-      )
-      })
+        }).
+          finally(() => {
+            loading(false,
+            );
+          });
       },
       onStreetSearch(search, loading) {
         loading(true);
-        axios.get(`api/Address/GetStreet?query=${search}&parentId=${this.currentCity.id}`).then(response = > {
+        axios.get(`api/Address/GetStreet?query=${search}&parentId=${this.currentCity.id}`).then(response => {
           this.streets = response.data.result;
-      }).
-        finally(() = > {
-          loading(false;
-      )
-      })
+        }).
+          finally(() => {
+            loading(false);
+          });
       },
       onBuildingSearch(search, loading) {
         loading(true);
-        axios.get(`api/Address/GetBuilding?query=${search}&parentId=${this.currentStreet.id}`).then(response = > {
+        axios.get(`api/Address/GetBuilding?query=${search}&parentId=${this.currentStreet.id}`).then(response => {
           this.buildings = response.data.result;
-      }).
-        finally(() = > {
-          loading(false;
-      )
-      })
-      }
-    }
-  }
+        }).
+          finally(() => {
+            loading(false);
+          });
+      },
+    },
+  };
 </script>
 
 <style scoped>
