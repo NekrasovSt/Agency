@@ -18,7 +18,7 @@
     </header>
     <div class="mdl-layout__drawer mdl-layout--small-screen-only">
       <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
-        <router-link class="mdl-navigation__link is-active" to="/">>Главная</router-link>
+        <router-link class="mdl-navigation__link is-active" to="/">Главная</router-link>
         <a class="mdl-navigation__link" href="blog.html">Blog</a>
         <a class="mdl-navigation__link" href="about.html">About</a>
         <a class="mdl-navigation__link" href="contact.html">Contact</a>

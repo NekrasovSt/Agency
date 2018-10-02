@@ -168,3 +168,14 @@ footer {
   background-size: cover;
 }
 
+.mdl-progress--accent > .bufferbar {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, rgb(255, 64, 129), rgb(255, 64, 129)) !important;
+}
+
+.mdl-progress--accent > .auxbar {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), linear-gradient(to right, rgb(255, 64, 129), rgb(255, 64, 129)) !important;
+}
+
+.mdl-progress--accent > .progressbar {
+  background-color: rgb(255, 64, 129) !important;
+}

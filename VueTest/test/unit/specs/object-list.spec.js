@@ -1,18 +1,13 @@
 import ObjectList from '@/components/object-list';
 import {mount} from '@vue/test-utils';
 import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
-
+import moxios from 'moxios';
 
 describe('edit-object.vue', () => {
   const $route = {
     params: {},
   };
-  const wrapper = mount(ObjectList, {
-    mocks: {
-      $route,
-    },
-  });
+  let wrapper;
   test('рендер', () => {
     expect(wrapper.find('h2').text()).toEqual('Параметры фильтрации');
   });
@@ -35,15 +30,76 @@ describe('edit-object.vue', () => {
     expect(wrp.findAll('input[type="checkbox"]').
       filter(w => w.element.checked).length).toBe(1);
   });
-  test('запрос на сервер', done => {
-    let mock = new MockAdapter(axios);
-    mock.onGet(/Announcement/).reply(function(config) {
-      return [200, {}];
+  beforeEach(function() {
+    moxios.install();
+    wrapper = mount(ObjectList, {
+      mocks: {
+        $route,
+      },
     });
+  });
+
+  afterEach(function() {
+    moxios.uninstall();
+  });
+  test('запрос на сервер после создания компонента', done => {
     mount(ObjectList, {
       mocks: {
         $route: {params: {}},
       },
+    });
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject');
+      done();
+    });
+  });
+  test('устанавливаем колиство комнат', done => {
+
+    wrapper.find('#room2').setChecked(true);
+    wrapper.vm.refresh();
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).
+        toBe(
+          'odata/Announcement?$expand=RealEstateObject&$filter=(RealEstateObject/Rooms eq 2)');
+      done();
+    });
+  });
+  test('выбрали все комнаты', done => {
+    wrapper.find('#room1').setChecked(true);
+    wrapper.find('#room2').setChecked(true);
+    wrapper.find('#room3').setChecked(true);
+    wrapper.find('#room4').setChecked(true);
+    wrapper.vm.refresh();
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject');
+      done();
+    });
+  });
+  test('не валидные значения цена "До" < "От"', () => {
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+    wrapper.find('#priceTo').setValue(30);
+    wrapper.find('#priceFrom').setValue(50);
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+  });
+  test('указали цена "От"', (done) => {
+    wrapper.find('#priceFrom').setValue(50);
+    wrapper.vm.refresh();
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject&$filter=(Price ge 50)');
+      done();
+    });
+  });
+  test('указали цена "До"', (done) => {
+    wrapper.find('#priceTo').setValue(40);
+    wrapper.vm.refresh();
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject&$filter=(Price le 40)');
+      done();
     });
   });
 });
