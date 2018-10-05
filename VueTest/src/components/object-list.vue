@@ -1,7 +1,8 @@
 <template>
 
   <div class="mdl-grid portfolio-max-width">
-    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-js-progress mdl-progress--accent" style="height: 4px"
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-js-progress mdl-progress--accent"
+         style="height: 4px"
          v-bind:class="{'mdl-progress mdl-progress__indeterminate': loading}"></div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-card mdl-shadow--4dp ">
       <div class="mdl-card__title">
@@ -10,17 +11,10 @@
       <div class="mdl-grid mdl-card__actions">
         <!--Тип недвижимости-->
         <div class="mdl-cell mdl-cell--4-col">
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="apartment">
-            <input type="checkbox" id="apartment" class="mdl-checkbox__input" value="apartment" v-model="types">
-            <span class="mdl-checkbox__label">Квартира</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="new-building">
-            <input type="checkbox" id="new-building" class="mdl-checkbox__input" value="NewBuilding" v-model="types">
-            <span class="mdl-checkbox__label">Новостройка</span>
-          </label>
-          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="house">
-            <input type="checkbox" id="house" class="mdl-checkbox__input" value="House" v-model="types">
-            <span class="mdl-checkbox__label">Дом</span>
+          <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" v-bind:for="key"
+                 v-for="(value, key) in defaultTypes">
+            <input type="checkbox" v-bind:id="key" class="mdl-checkbox__input" v-bind:value="key" v-model="types">
+            <span class="mdl-checkbox__label">{{value}}</span>
           </label>
         </div>
         <!--Количество комнат-->
@@ -73,20 +67,27 @@
         <img class="article-image" src=" images/example-blog01.jpg" border="0" alt="">
       </div>
       <div class="mdl-cell mdl-cell--8-col">
-        <h2 class="mdl-card__title-text">Velit anim eiusmod labore sit amet</h2>
+        <h2 class="mdl-card__title-text">{{item.RealEstateObject.Rooms}} ком. {{item.RealEstateObject.Square}} кв.м.
+          {{item.Price}} руб.</h2>
         <div class="mdl-card__supporting-text padding-top">
           <span>{{item.creationDate|format}}</span>
-          <div id="tt1" class=" icon material-icons portfolio-share-btn">share</div>
-          <div class="mdl-tooltip" for="tt1">
-            Share via social media
-          </div>
+          <!--<div id="tt1" class=" icon material-icons portfolio-share-btn">share</div>-->
+          <!--<div class="mdl-tooltip" for="tt1">-->
+          <!--Share via social media-->
+          <!--</div>-->
         </div>
         <div class="mdl-card__supporting-text no-left-padding">
-          <p>Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore
-            sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Qui ullamco consectetur aute
-            fugiat officia ullamco proident Lorem ad irure. Sint eu ut consectetur ut esse veniam laboris adipisicing
-            aliquip minim anim labore commodo.</p>
-          <span>Category: <a href="#">Latest</a></span>
+          <p class="description-section">{{item.RealEstateObject.Description}}</p>
+        </div>
+        <div class="mdl-grid mdl-card__actions">
+          <span class="mdl-chip">
+            <span class="mdl-chip__text">Категория: {{item.RealEstateObject.RealEstateType | estate-type}}</span>
+          </span>
+          <div class="mdl-layout-spacer"></div>
+          <router-link :to="'/announcement/' + item.Id"
+                       class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
+            Подробнее
+          </router-link>
         </div>
       </div>
     </div>
@@ -95,11 +96,13 @@
 
 <script>
   import axios from 'axios';
+  import {realEstateTypes, count} from '../miscellaneous/real-estate-types';
 
   export default {
     name: 'ObjectList',
     data() {
       return {
+        defaultTypes: realEstateTypes,
         announcements: null,
         types: [],
         rooms: [],
@@ -132,6 +135,10 @@
         if (this.priceTo !== null && this.priceTo !== '') {
           filter.push(`(Price le ${this.priceTo})`);
         }
+        if (this.types.length > 0 && this.types.length !== count) {
+          filter.push('(' + this.types.map(i => `RealEstateObject/RealEstateType eq '${i}'`).join(' or ') + ')');
+        }
+
         if (filter.length !== 0) {
           url += '&$filter=' + filter.join(' and ');
         }
@@ -141,22 +148,34 @@
         }).catch(error => {
 
         }).finally(() => {
-          setTimeout(()=>{
+          setTimeout(() => {
             this.loading = false;
-          },300);
+          }, 300);
 
         });
       },
     },
     created() {
       if (this.$route.params.type) {
-        this.types.push(this.$route.params.type);
+        let type = this.$route.params.type.charAt(0).toUpperCase() + this.$route.params.type.slice(1);
+        this.types.push(type);
       }
       this.refresh();
+    },
+    mounted() {
+      if (window.componentHandler)
+        componentHandler.upgradeAllRegistered();
     },
   };
 </script>
 
 <style scoped>
-
+  .description-section {
+    max-height: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+  }
 </style>

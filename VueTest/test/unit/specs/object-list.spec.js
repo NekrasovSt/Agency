@@ -1,7 +1,10 @@
 import ObjectList from '@/components/object-list';
 import {mount} from '@vue/test-utils';
-import axios from 'axios';
 import moxios from 'moxios';
+import {
+  count,
+  realEstateTypes,
+} from '../../../src/miscellaneous/real-estate-types';
 
 describe('edit-object.vue', () => {
   const $route = {
@@ -26,7 +29,7 @@ describe('edit-object.vue', () => {
       },
     });
     expect(wrp.vm.$route.params.type).toBe('apartment');
-    expect(wrp.find('input[value="apartment"]').element.checked).toBeTruthy();
+    expect(wrp.find('input[value="Apartment"]').element.checked).toBeTruthy();
     expect(wrp.findAll('input[type="checkbox"]').
       filter(w => w.element.checked).length).toBe(1);
   });
@@ -78,6 +81,23 @@ describe('edit-object.vue', () => {
       done();
     });
   });
+  test('устанавливаем тип недвижимости', done => {
+    //Сброс всех галочек
+    Object.keys(realEstateTypes).forEach(key => {
+      wrapper.find('#' + key).setChecked(false);
+    });
+    wrapper.find('#Apartment').setChecked(true);
+    wrapper.find('#House').setChecked(true);
+    wrapper.vm.refresh();
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      expect(request.url).
+        toBe(
+          'odata/Announcement?$expand=RealEstateObject&$filter=(RealEstateObject/RealEstateType eq \'Apartment\' or RealEstateObject/RealEstateType eq \'House\')');
+      done();
+    });
+
+  });
   test('не валидные значения цена "До" < "От"', () => {
     expect(wrapper.vm.isInvalid).toBeFalsy();
     wrapper.find('#priceTo').setValue(30);
@@ -89,7 +109,9 @@ describe('edit-object.vue', () => {
     wrapper.vm.refresh();
     moxios.wait(() => {
       let request = moxios.requests.mostRecent();
-      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject&$filter=(Price ge 50)');
+      expect(request.url).
+        toBe(
+          'odata/Announcement?$expand=RealEstateObject&$filter=(Price ge 50)');
       done();
     });
   });
@@ -98,7 +120,9 @@ describe('edit-object.vue', () => {
     wrapper.vm.refresh();
     moxios.wait(() => {
       let request = moxios.requests.mostRecent();
-      expect(request.url).toBe('odata/Announcement?$expand=RealEstateObject&$filter=(Price le 40)');
+      expect(request.url).
+        toBe(
+          'odata/Announcement?$expand=RealEstateObject&$filter=(Price le 40)');
       done();
     });
   });
