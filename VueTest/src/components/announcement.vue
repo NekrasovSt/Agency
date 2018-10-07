@@ -16,9 +16,12 @@
           <img class="article-image" src="@/assets/example-work09.jpg">
         </div>
       </div>
-      <div class="mdl-card__supporting-text"><strong>Город:</strong> {{item.RealEstateObject.City}}</div>
-      <div class="mdl-card__supporting-text"><strong>Номер дома:</strong> {{item.RealEstateObject.Building}}</div>
-      <div class="mdl-card__supporting-text"><strong>Край:</strong> {{item.RealEstateObject.Region}}</div>
+      <div class="mdl-card__supporting-text" v-if="item"><strong>Край:</strong> {{item.RealEstateObject.Region}}<br/>
+        <strong>Город:</strong> {{item.RealEstateObject.City}}<br/>
+        <strong>Улица:</strong> {{item.RealEstateObject.Street}}<br/>
+        <strong>Номер дома:</strong> {{item.RealEstateObject.Building}}<br/>
+        {{item.RealEstateObject.Description}}
+      </div>
     </div>
   </div>
 </template>

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import EditObject from '@/components/edit-object';
 import {mount} from '@vue/test-utils';
 
