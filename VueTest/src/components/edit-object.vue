@@ -6,7 +6,7 @@
       </div>
       <div class="mdl-card__supporting-text  mdl-grid">
         <div class="mdl-cell mdl-cell--4-col mdl-card__media thumb" v-for="(file, index) in images">
-          <img :src="file.blob" class="article-image thumb--image"/>
+          <img :src="source(file)" class="article-image thumb--image"/>
           <div class="mdl-card__menu">
             <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect"
                     @click.prevent="remove(file)">
@@ -15,18 +15,12 @@
           </div>
         </div>
         <div class="mdl-cell mdl-cell--12-col">
-          <file-upload
-            class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent"
-            ref="upload"
-            v-model="images"
-            :multiple="true"
-            @input-filter="inputFilter"
-            @input-file="inputFile"
-            post-action="/api/upload">
+          <label
+            class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
             Загрузит файл
-          </file-upload>
-          <button v-show="!$refs.upload || !$refs.upload.active" @click.prevent="$refs.upload.active = true"
-                  type="button">Start upload
+            <input type="file" class="file-input" ref="files" multiple v-on:change="handleFilesUpload($refs.files)"/>
+          </label>
+          <button type="button" @click="uploadServer()">Start upload
           </button>
         </div>
       </div>
@@ -111,7 +105,7 @@
         streets: [],
         buildings: [],
         floor: null,
-        images: []
+        images: [],
       };
     },
     computed: {
@@ -130,66 +124,43 @@
     },
     methods: {
       remove(file) {
-        this.$refs.upload.remove(file)
+        // this.images.find(i => i.name === file.name && i.size === file.size);
+        let index = this.images.indexOf(file);
+        this.images.splice(index, 1);
       },
-      inputFile(newFile, oldFile) {
-        if (newFile && !oldFile) {
-          // Add file
-        }
-
-        if (newFile && oldFile) {
-          // Update file
-
-          // Start upload
-          if (newFile.active !== oldFile.active) {
-            console.log('Start upload', newFile.active, newFile);
-
-          }
-
-          // Upload progress
-          if (newFile.progress !== oldFile.progress) {
-            console.log('progress', newFile.progress, newFile)
-          }
-
-          // Upload error
-          if (newFile.error !== oldFile.error) {
-            console.log('error', newFile.error, newFile)
-          }
-
-          // Uploaded successfully
-          if (newFile.success !== oldFile.success) {
-            console.log('success', newFile.success, newFile)
-          }
-        }
-
-        if (!newFile && oldFile) {
-          // Remove file
-
-          // Automatically delete files on the server
-          if (oldFile.success && oldFile.response) {
-            // $.ajax({
-            //   type: 'DELETE',
-            //   url: '/file/delete?id=' + oldFile.response.id,
-            // });
-            console.log('delete', oldFile.response);
+      source(file) {
+        console.log(URL, URL.createObjectURL);
+        return URL.createObjectURL(file);
+      },
+      handleFilesUpload(event) {
+        let files = event.files;//this.$refs.files.files;
+        for (let i = 0; i < files.length; i++) {
+          if (!this.images.some(
+            j => j.name === files[i].name && j.size === files[i].size)) {
+            this.images.push(files[i]);
           }
         }
       },
-      inputFilter: function (newFile, oldFile, prevent) {
-        if (newFile && !oldFile) {
-          // Filter non-image file
-          if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
-            return prevent()
-          }
-        }
-
-        if (newFile && (!oldFile || newFile.file !== oldFile.file)) {
-          newFile.blob = '';
-          let URL = window.URL || window.webkitURL;
-          if (URL && URL.createObjectURL) {
-            newFile.blob = URL.createObjectURL(newFile.file)
-          }
-        }
+      uploadServer() {
+        let formData = new FormData();
+        this.images.forEach((i, j) => {
+          formData.append(`file`, i);
+        });
+        const obj = {
+          hello: 'world',
+        };
+        const json = JSON.stringify(obj);
+        const blob = new Blob([json], {
+          type: 'application/json',
+        });
+        formData.append('document', blob);
+        axios.post('/odata/RealEstateObject', formData, {headers: {'Content-type': 'multipart/form-data'}}).
+          then(function() {
+            console.log('SUCCESS!!');
+          }).
+          catch(function() {
+            console.log('FAILURE!!');
+          });
       },
       onRegionSearch(search, loading) {
         loading(true);
@@ -225,6 +196,31 @@
         });
       },
     },
+    created() {
+      if (this.$route.params.id !== undefined) {
+        let url = `odata/RealEstateObject(${this.$route.params.id})`;
+        axios.get(url).then(response => {
+          this.item = response.data;
+          return axios.get(`api/Address/GetParents?code=${this.item.Code}&building=${this.item.Building}`);
+        }).then(response => {
+          response.data.result[0].parents.forEach(parent => {
+            if (parent.contentType === 'region') {
+              this.currentRegion = parent;
+            }
+            if (parent.contentType === 'city') {
+              this.currentCity = parent;
+            }
+            if (parent.contentType === 'street') {
+              this.currentStreet = parent;
+            }
+          });
+        }).catch(error => {
+
+        }).finally(() => {
+
+        });
+      }
+    },
   };
 </script>
 
@@ -237,6 +233,10 @@
     max-height: 200px;
     object-fit: contain;
 
+  }
+
+  .file-input {
+    display: none;
   }
 
   .v-select .dropdown-toggle {

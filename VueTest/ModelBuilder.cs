@@ -12,6 +12,7 @@ namespace Agency.Web
       var builder = new ODataConventionModelBuilder(serviceProvider);
 
       builder.EntitySet<Announcement>(nameof(Announcement));
+      builder.EntitySet<RealEstateObject>(nameof(RealEstateObject));
 
       return builder.GetEdmModel();
     }

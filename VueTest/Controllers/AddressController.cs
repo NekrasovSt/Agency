@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Agency.Web.Controllers
 {
@@ -60,6 +63,19 @@ namespace Agency.Web.Controllers
     {
       string url = $"http://kladr-api.ru/api.php?contentType=building&query={query}&streetId={parentId}";
       return await SendRequest(url);
+    }
+    [HttpGet("GetParents")]
+    public async Task<IActionResult> GetParents(string code, string building)
+    {
+      string url = $"http://kladr-api.ru/api.php?contentType=building&buildingId={code}&withParent=1";
+      using (HttpClient client = new HttpClient())
+      {
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        JObject obj = JObject.Parse(responseBody);
+        return Json(obj["result"].FirstOrDefault(i => i["name"].ToString() == building));
+      }
     }
   }
 }

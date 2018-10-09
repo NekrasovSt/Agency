@@ -19,8 +19,7 @@
     "v-suggestions": "^1.0.6",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vue-select": "^2.5.1",
-    "vue-upload-component": "^2.8.14"
+    "vue-select": "^2.5.1"
   },
   "devDependencies": {
     "aspnet-webpack": "^3.0.0",

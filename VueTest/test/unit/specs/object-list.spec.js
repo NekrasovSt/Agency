@@ -6,7 +6,7 @@ import {
   realEstateTypes,
 } from '../../../src/miscellaneous/real-estate-types';
 
-describe('edit-object.vue', () => {
+describe('object-list.vue', () => {
   const $route = {
     params: {},
   };

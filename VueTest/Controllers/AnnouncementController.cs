@@ -29,7 +29,7 @@ namespace Agency.Web.Controllers
           Rooms = 1,
           Square = 23.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       list.Add(new Announcement()
@@ -49,7 +49,7 @@ namespace Agency.Web.Controllers
           Rooms = 2,
           Square = 30.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       list.Add(new Announcement()
@@ -69,7 +69,7 @@ namespace Agency.Web.Controllers
           Rooms = 3,
           Square = 33.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       list.Add(new Announcement()
@@ -89,7 +89,7 @@ namespace Agency.Web.Controllers
           Rooms = 3,
           Square = 33.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       list.Add(new Announcement()
@@ -109,7 +109,7 @@ namespace Agency.Web.Controllers
           Rooms = 4,
           Square = 33.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       list.Add(new Announcement()
@@ -129,7 +129,7 @@ namespace Agency.Web.Controllers
           Rooms = 3,
           Square = 33.4,
           Street = "Ленина",
-          FIAS = "59000000123"
+          Code = "59000000123"
         }
       });
       return list;

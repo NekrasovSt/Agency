@@ -28,7 +28,7 @@ namespace Agency.Web.Models
 
     public string Building { get; set; }
 
-    public string FIAS { get; set; }
+    public string Code { get; set; }
 
     public RealEstateType RealEstateType { get; set; }
   }
