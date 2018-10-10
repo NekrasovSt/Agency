@@ -71,10 +71,6 @@
           {{item.Price}} руб.</h2>
         <div class="mdl-card__supporting-text padding-top">
           <span>{{item.creationDate|format}}</span>
-          <!--<div id="tt1" class=" icon material-icons portfolio-share-btn">share</div>-->
-          <!--<div class="mdl-tooltip" for="tt1">-->
-          <!--Share via social media-->
-          <!--</div>-->
         </div>
         <div class="mdl-card__supporting-text no-left-padding">
           <p class="description-section">{{item.RealEstateObject.Description}}</p>

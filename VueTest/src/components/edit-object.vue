@@ -14,32 +14,30 @@
             </button>
           </div>
         </div>
-        <div class="mdl-cell mdl-cell--12-col">
-          <label
-            class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
-            Загрузит файл
-            <input type="file" class="file-input" ref="files" multiple v-on:change="handleFilesUpload($refs.files)"/>
-          </label>
-          <button type="button" @click="uploadServer()">Start upload
-          </button>
-        </div>
       </div>
-
-      <form class="mdl-card__supporting-text mdl-grid">
+      <div class="mdl-grid mdl-card__actions">
+        <div class="mdl-layout-spacer"></div>
+        <label
+          class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
+          Загрузит файл
+          <input type="file" class="file-input" ref="files" multiple v-on:change="handleFilesUpload($refs.files)"/>
+        </label>
+      </div>
+      <form class="mdl-card__supporting-text mdl-grid" name="object-from">
         <div class="mdl-cell mdl-cell--6-col">
-          <div class="mdl-textfield mdl-js-textfield">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--limited">
             <v-select
               v-model="currentRegion"
               :filterable="false"
               label="name"
               @search="onRegionSearch"
-              class="mdl-textfield mdl-input__expandable-holder"
               placeholder="Выберите край/область..."
               inputId="region"
               :options="regions">
             </v-select>
+            <label class="mdl-textfield__label mdl-textfield__label--fixed" for="region">Край</label>
           </div>
-          <div class="mdl-textfield mdl-js-textfield">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--limited">
             <v-select
               v-model="currentCity"
               :disabled="!regionSelected"
@@ -47,10 +45,12 @@
               label="name"
               placeholder="Выберите город..."
               @search="onCitySearch"
+              inputId="city"
               :options="cities">
             </v-select>
+            <label class="mdl-textfield__label mdl-textfield__label--fixed" for="city">Город</label>
           </div>
-          <div class="mdl-textfield mdl-js-textfield">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--limited">
             <v-select
               v-model="currentStreet"
               :disabled="!citySelected"
@@ -58,10 +58,12 @@
               label="name"
               placeholder="Выберите улицу..."
               @search="onStreetSearch"
+              inputId="street"
               :options="streets">
             </v-select>
+            <label class="mdl-textfield__label mdl-textfield__label--fixed" for="street">Улица</label>
           </div>
-          <div class="mdl-textfield mdl-js-textfield">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--limited">
             <v-select
               v-model="currentBuilding"
               :disabled="!streetSelected"
@@ -69,21 +71,60 @@
               label="name"
               placeholder="Выберите номер дома/строения..."
               @search="onBuildingSearch"
+              inputId="building"
               :options="buildings">
             </v-select>
+            <label class="mdl-textfield__label mdl-textfield__label--fixed" for="building">Номер дома/строения</label>
           </div>
         </div>
         <div class="mdl-cell mdl-cell--6-col">
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="text" id="floor" v-model="floor" required>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="floor" v-model="floor" pattern="^[1-9]\d?\/[1-9]\d?$"
+                   required>
             <label class="mdl-textfield__label" for="floor">Этаж/Этажей</label>
+            <span class="mdl-textfield__error">1..99/1..99! Например 3/5</span>
           </div>
-          <div class="mdl-textfield mdl-js-textfield">
-            <input class="mdl-textfield__input" type="number" id="square" v-model="square" required>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="square" v-model.number="square"
+                   pattern="^[0-9]*(\.[0-9]+)?" required>
             <label class="mdl-textfield__label" for="square">Площадъ</label>
+            <span class="mdl-textfield__error">Дробное число разделитель точка!</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="rooms" v-model.number="rooms" required
+                   pattern="^[1-9]\d?$">
+            <label class="mdl-textfield__label" for="rooms">Комнат</label>
+            <span class="mdl-textfield__error">Число от 1 до 99!</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--limited">
+            <v-select
+              v-model="realEstateType"
+              label="name"
+              placeholder="Выберите тип объекта"
+              inputId="type"
+              :options="realEstateTypes">
+            </v-select>
+            <label class="mdl-textfield__label mdl-textfield__label--fixed" for="type">Тип недвижимости</label>
           </div>
         </div>
       </form>
+      <div class="mdl-grid mdl-card__actions">
+        <div class="mdl-layout-spacer"></div>
+        <button
+          class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent"
+          v-on:click="send()"
+          v-bind:disabled="isInvalid">
+          сохранить
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect">
+          Отмена
+        </button>
+      </div>
+    </div>
+
+    <div ref="snack" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
     </div>
   </div>
 </template>
@@ -106,6 +147,12 @@
         buildings: [],
         floor: null,
         images: [],
+        rooms: null,
+        realEstateType: {id: 'Apartment', name: 'Квартира'},
+        realEstateTypes: [
+          {id: 'Apartment', name: 'Квартира'},
+          {id: 'NewBuilding', name: 'Новостройка'},
+          {id: 'House', name: 'Дом'}],
       };
     },
     computed: {
@@ -121,15 +168,22 @@
       buildingSelected() {
         return !!this.currentBuilding;
       },
+      isInvalid() {
+        return !this.regionSelected ||
+          !this.citySelected ||
+          !this.streetSelected ||
+          !this.buildingSelected ||
+          !/^[1-9]\d?\/[1-9]\d?$/.test(this.floor) ||
+          !/^[0-9]*(\.[0-9]+)?/.test(this.square) ||
+          !/^[1-9]\d?$/.test(this.rooms);
+      },
     },
     methods: {
       remove(file) {
-        // this.images.find(i => i.name === file.name && i.size === file.size);
         let index = this.images.indexOf(file);
         this.images.splice(index, 1);
       },
       source(file) {
-        console.log(URL, URL.createObjectURL);
         return URL.createObjectURL(file);
       },
       handleFilesUpload(event) {
@@ -141,25 +195,33 @@
           }
         }
       },
-      uploadServer() {
+      send() {
         let formData = new FormData();
         this.images.forEach((i, j) => {
           formData.append(`file`, i);
         });
-        const obj = {
-          hello: 'world',
+        const model = {
+          Id: this.$route.params.id || 0,
+          Rooms: this.rooms,
+          Square: this.square,
+          Floor: this.floor,
+          Region: this.currentRegion.name,
+          City: this.currentCity.name,
+          Street: this.currentStreet.name,
+          Building: this.currentBuilding.name,
+          Code: this.currentBuilding.id,
+          RealEstateType: this.realEstateType.id,
         };
-        const json = JSON.stringify(obj);
-        const blob = new Blob([json], {
+        const blob = new Blob([JSON.stringify(model)], {
           type: 'application/json',
         });
         formData.append('document', blob);
         axios.post('/odata/RealEstateObject', formData, {headers: {'Content-type': 'multipart/form-data'}}).
-          then(function() {
-            console.log('SUCCESS!!');
+          then(() => {
+            this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'});
           }).
-          catch(function() {
-            console.log('FAILURE!!');
+          catch(() => {
+            this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'});
           });
       },
       onRegionSearch(search, loading) {
@@ -239,11 +301,25 @@
     display: none;
   }
 
+  .mdl-textfield__label--fixed {
+    color: rgb(158, 158, 158);
+    font-size: 12px;
+    top: 4px;
+  }
+
   .v-select .dropdown-toggle {
     border: none;
   }
 
   .v-select ul.dropdown-menu {
     border: none;
+  }
+
+  .vs__selected-options {
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
+  }
+
+  .mdl-textfield--limited {
+    height: 67px;
   }
 </style>

@@ -35,6 +35,9 @@ describe('edit-object.vue', () => {
   });
   beforeEach(function() {
     moxios.install();
+    URL.createObjectURL = function(temp) {
+
+    };
   });
   afterEach(function() {
     moxios.uninstall();
@@ -125,9 +128,47 @@ describe('edit-object.vue', () => {
       },
     });
     expect(wrp.vm.images.length).toEqual(0);
-    // const input = wrapper.find('input[type="file"]');
     wrp.vm.handleFilesUpload({files: event});
-    console.log(window.URL.createObjectURL);
     expect(wrp.vm.images.length).toEqual(2);
+  });
+  it('удаляем файл', () => {
+    const event = [
+      new File(['foo'], 'test1.txt'),
+      new File(['foo2'], 'test2.txt')];
+    wrapper.vm.images = event;
+    expect(wrapper.vm.images.length).toEqual(2);
+    wrapper.vm.remove(new File(['foo2'], 'test2.txt'));
+    expect(wrapper.vm.images.length).toEqual(1);
+  });
+  it('форма не валидна, пока все не заполнено', () => {
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({currentRegion: {id: '000001', name: ''}});
+    wrapper.setData({currentCity: {id: '000001', name: ''}});
+    wrapper.setData({currentStreet: {id: '000001', name: ''}});
+    wrapper.setData({currentBuilding: {id: '000001', name: ''}});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({floor: "2/5"});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({square: 23.5});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({rooms: 3});
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+  });
+  it('форма не валидна, не верный формат этажей', () => {
+    wrapper.setData({currentRegion: {id: '000001', name: ''}});
+    wrapper.setData({currentCity: {id: '000001', name: ''}});
+    wrapper.setData({currentStreet: {id: '000001', name: ''}});
+    wrapper.setData({currentBuilding: {id: '000001', name: ''}});
+    wrapper.setData({floor: "2/5"});
+    wrapper.setData({square: 23.5});
+    wrapper.setData({rooms: 3});
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+
+    wrapper.setData({floor: "2/"});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({floor: "/5"});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({floor: "/"});
+    expect(wrapper.vm.isInvalid).toBeTruthy();
   });
 });
