@@ -216,13 +216,19 @@
           type: 'application/json',
         });
         formData.append('document', blob);
-        axios.post('/odata/RealEstateObject', formData, {headers: {'Content-type': 'multipart/form-data'}}).
-          then(() => {
-            this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'});
-          }).
-          catch(() => {
-            this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'});
-          });
+        let promise;
+        if (this.$route.params.id === undefined) {
+          promise = axios.post('/odata/RealEstateObject', formData, {headers: {'Content-type': 'multipart/form-data'}});
+        }
+        else {
+          promise = axios.put(`/odata/RealEstateObject(${this.$route.params.id})`, formData,
+            {headers: {'Content-type': 'multipart/form-data'}});
+        }
+        promise.then(() => {
+          this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'});
+        }).catch(() => {
+          this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'});
+        });
       },
       onRegionSearch(search, loading) {
         loading(true);

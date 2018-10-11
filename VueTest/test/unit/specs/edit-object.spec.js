@@ -1,13 +1,13 @@
 import EditObject from '@/components/edit-object';
 import {mount} from '@vue/test-utils';
 import moxios from 'moxios';
+import {matchers} from 'jest-json-schema';
+import realEstateTypeSchema from '../schemas/realEstateType';
+
+expect.extend(matchers);
 
 describe('edit-object.vue', () => {
-  const wrapper = mount(EditObject, {
-    mocks: {
-      $route: {params: {}},
-    },
-  });
+  let wrapper;
   it('все селекты кроме области не доступны в начале', () => {
     expect(wrapper.vm.regionSelected).toBeFalsy();
     expect(wrapper.vm.citySelected).toBeFalsy();
@@ -38,6 +38,11 @@ describe('edit-object.vue', () => {
     URL.createObjectURL = function(temp) {
 
     };
+    wrapper = mount(EditObject, {
+      mocks: {
+        $route: {params: {}},
+      },
+    });
   });
   afterEach(function() {
     moxios.uninstall();
@@ -147,7 +152,7 @@ describe('edit-object.vue', () => {
     wrapper.setData({currentStreet: {id: '000001', name: ''}});
     wrapper.setData({currentBuilding: {id: '000001', name: ''}});
     expect(wrapper.vm.isInvalid).toBeTruthy();
-    wrapper.setData({floor: "2/5"});
+    wrapper.setData({floor: '2/5'});
     expect(wrapper.vm.isInvalid).toBeTruthy();
     wrapper.setData({square: 23.5});
     expect(wrapper.vm.isInvalid).toBeTruthy();
@@ -159,16 +164,68 @@ describe('edit-object.vue', () => {
     wrapper.setData({currentCity: {id: '000001', name: ''}});
     wrapper.setData({currentStreet: {id: '000001', name: ''}});
     wrapper.setData({currentBuilding: {id: '000001', name: ''}});
-    wrapper.setData({floor: "2/5"});
+    wrapper.setData({floor: '2/5'});
     wrapper.setData({square: 23.5});
     wrapper.setData({rooms: 3});
     expect(wrapper.vm.isInvalid).toBeFalsy();
 
-    wrapper.setData({floor: "2/"});
+    wrapper.setData({floor: '2/'});
     expect(wrapper.vm.isInvalid).toBeTruthy();
-    wrapper.setData({floor: "/5"});
+    wrapper.setData({floor: '/5'});
     expect(wrapper.vm.isInvalid).toBeTruthy();
-    wrapper.setData({floor: "/"});
+    wrapper.setData({floor: '/'});
     expect(wrapper.vm.isInvalid).toBeTruthy();
+  });
+  it('отправка нового объекта', (done) => {
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      floor: '2/5',
+      square: 23.5,
+      rooms: 3,
+    });
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+    wrapper.vm.send();
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      expect(recent.url).toEqual('/odata/RealEstateObject');
+      expect(recent.config.method).toEqual('post');
+      const documentBlob = recent.config.data.getAll('document')[0];
+      const json = JSON.parse(String.fromCharCode.apply(null,
+        new Uint16Array(documentBlob._buffer)));
+
+      expect(json).toMatchSchema(realEstateTypeSchema);
+      done();
+    });
+  });
+  it('обновление объекта', (done) => {
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      floor: '2/5',
+      square: 23.5,
+      rooms: 3,
+    });
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+
+    wrapper.vm.$route.params.id = 1;
+    wrapper.vm.send();
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      expect(recent.url).toEqual('/odata/RealEstateObject(1)');
+      expect(recent.config.method).toEqual('put');
+      const documentBlob = recent.config.data.getAll('document')[0];
+      const json = JSON.parse(String.fromCharCode.apply(null,
+        new Uint16Array(documentBlob._buffer)));
+
+      expect(json).toMatchSchema(realEstateTypeSchema);
+      done();
+    });
   });
 });
