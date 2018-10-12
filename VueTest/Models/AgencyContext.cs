@@ -9,6 +9,16 @@ namespace Agency.Web.Models
     public AgencyContext(DbContextOptions options) : base(options)
     {
     }
+
     public DbSet<RealEstateObject> RealEstateObject { get; set; }
+    public DbSet<RealEstateObjectFile> RealEstateObjectFile { get; set; }
+
+
+    protected override void OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder builder)
+    {
+      builder.Entity<RealEstateObjectFile>()
+        .HasKey(t => new {t.RealEstateObjectId, t.Name});
+      base.OnModelCreating(builder);
+    }
   }
 }

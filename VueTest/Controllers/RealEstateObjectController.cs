@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Agency.Web.Models;
 using Agency.Web.Utils;
 using Microsoft.AspNet.OData;
@@ -22,9 +24,12 @@ namespace Agency.Web.Controllers
     }
 
     [EnableQuery]
-    public RealEstateObject Get(int key)
+    public async Task<IActionResult> Get(int key)
     {
-      return _context.RealEstateObject.Find(key);
+      var obj = await _context.RealEstateObject.FindAsync(key);
+      if (obj == null)
+        return NotFound();
+      return Ok(obj);
     }
 
     [EnableQuery]
@@ -36,19 +41,78 @@ namespace Agency.Web.Controllers
     public IActionResult Post(IFormFile document, List<IFormFile> file)
     {
       RealEstateObject model = document.GetObjectFromForm<RealEstateObject>();
-
-      if (!TryValidateModel(model) && !ModelState.IsValid)
+      if (!TryValidateModel(model) || !ModelState.IsValid)
       {
         return BadRequest(ModelState);
       }
 
-      foreach (IFormFile formFile in file)
+      if (file != null)
       {
-        formFile.SaveFromForm(Path.Combine(_appEnvironment.WebRootPath, "photos"));
+        var root = Path.Combine(_appEnvironment.WebRootPath, "photos");
+        Directory.CreateDirectory(root);
+        foreach (IFormFile formFile in file)
+        {
+          model.RealEstateObjectFile.Add(new RealEstateObjectFile()
+          {
+            Name = Path.GetFileName(formFile.SaveFromForm(root)),
+          });
+        }
       }
 
       _context.RealEstateObject.Add(model);
+      _context.SaveChanges();
       return Created(model);
+    }
+
+    public IActionResult Put(IFormFile document, List<IFormFile> file, int key)
+    {
+      var oldModel = _context.RealEstateObject.Find(key);
+      if (oldModel == null)
+      {
+        return NotFound();
+      }
+
+      RealEstateObject model = document.GetObjectFromForm<RealEstateObject>();
+      if (!TryValidateModel(model) || !ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+
+      var root = Path.Combine(_appEnvironment.WebRootPath, "photos");
+      if (file != null)
+      {
+        Directory.CreateDirectory(root);
+        foreach (IFormFile formFile in file)
+        {
+          model.RealEstateObjectFile.Add(new RealEstateObjectFile()
+          {
+            Name = Path.GetFileName(formFile.SaveFromForm(root))
+          });
+        }
+      }
+
+      var deleted = oldModel.RealEstateObjectFile.Select(i => i.Name)
+        .Except(model.RealEstateObjectFile.Select(i => i.Name));
+      foreach (string deletedFile in deleted)
+      {
+        System.IO.File.Delete(Path.Combine(root, deletedFile));
+      }
+
+      oldModel.RealEstateObjectFile = model.RealEstateObjectFile;
+
+      oldModel.Building = model.Building;
+      oldModel.City = model.City;
+      oldModel.Code = model.Code;
+      oldModel.Description = model.Description;
+      oldModel.Floor = model.Floor;
+      oldModel.Region = model.Region;
+      oldModel.Street = model.Street;
+      oldModel.Rooms = model.Rooms;
+      oldModel.Square = model.Square;
+      oldModel.RealEstateType = model.RealEstateType;
+
+      _context.SaveChanges();
+      return Ok(model);
     }
   }
 }

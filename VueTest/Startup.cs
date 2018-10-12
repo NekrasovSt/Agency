@@ -1,13 +1,29 @@
-﻿using Microsoft.AspNet.OData.Extensions;
+﻿using Agency.Web.Models;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Agency.Web
 {
   public class Startup
   {
+    private IConfigurationRoot Configuration;
+
+    public Startup(IHostingEnvironment env)
+    {
+      var builder = new ConfigurationBuilder()
+        .SetBasePath(env.ContentRootPath)
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+        .AddEnvironmentVariables();
+      builder.AddUserSecrets<Startup>();
+      Configuration = builder.Build();
+    }
+
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
@@ -15,6 +31,8 @@ namespace Agency.Web
       services.AddMemoryCache();
       services.AddOData();
       services.AddMvc();
+
+      services.AddDbContext<AgencyContext>(opt => opt.UseInMemoryDatabase("agency"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

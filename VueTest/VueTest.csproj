@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Agency.Web</AssemblyName>
     <RootNamespace>Agency.Web</RootNamespace>
+    <UserSecretsId>7bbe86fb-6d16-4ca9-a379-7471edb46af6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +19,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices">
       <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.SecretManager.Tools">
+      <Version>2.0.2</Version>
     </PackageReference>
   </ItemGroup>
 

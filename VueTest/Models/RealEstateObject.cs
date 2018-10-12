@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Agency.Web.Models
@@ -7,6 +8,7 @@ namespace Agency.Web.Models
     /// <summary>
     /// Ид
     /// </summary>
+    [Key]
     public int Id { get; set; }
 
     /// <summary>
@@ -63,5 +65,9 @@ namespace Agency.Web.Models
     /// Тип недвижимости
     /// </summary>
     public RealEstateType RealEstateType { get; set; }
+    /// <summary>
+    /// Связанные файлы
+    /// </summary>
+    public HashSet<RealEstateObjectFile> RealEstateObjectFile { get; set; } = new HashSet<RealEstateObjectFile>();
   }
 }
