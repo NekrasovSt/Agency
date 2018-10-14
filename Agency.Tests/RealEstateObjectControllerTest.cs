@@ -334,5 +334,59 @@ namespace Agency.Tests
 
             Assert.That(File.Exists(path), Is.False);
         }
+
+        [Test]
+        public void PutWithFile()
+        {
+            var before = _context.RealEstateObject.Count();
+            //Model
+            var modelMock = new Mock<IFormFile>();
+            var model = new RealEstateObject()
+            {
+                RealEstateType = RealEstateType.Apartment,
+                Building = "1",
+                City = "Пермь",
+                Description =
+                    "Малоквартирный дом бизнес-класса. Все квартиры в нашем доме имеют свободную планировку. \nКвартира расположена на 3 этаже 12 этажного дома. Общая площадь квартиры 115,4 кв.м., жилая 66 кв.м., просторная прихожая, высокие потолки 2,9м. \nВ нашей квартире имеется: большая кухня-столовая, большая ванная комната с отдельной душевой кабиной и санузлом, гостиная, спальня/детская, спальня, 2 гардеробных комнаты, лоджия. На кухне, в ванной комнате и коридоре установлен теплый пол. В квартире сделан ремонт из качественных европейских материалов. \nДоступ на территорию дома ограничен для посторонних лиц. Ограждение дома оборудовано автоматическими воротами. На всей территории установлено видеонаблюдение. В подъезде, для Вашей безопасности, работает охрана.",
+                Floor = "3/5",
+                Region = "Пермский край",
+                Rooms = 1,
+                Square = 23.4,
+                Street = "Ленина",
+                Code = "59000000123",
+                RealEstateObjectFile = new HashSet<RealEstateObjectFile>()
+                {
+                    new RealEstateObjectFile()
+                    {
+                        Name = "test-tmp.txt"
+                    },
+                    new RealEstateObjectFile()
+                    {
+                        Name = "test-tmp-1.txt"
+                    }
+                }
+            };
+            modelMock.Setup(i => i.OpenReadStream()).Returns(model.ToJsonStream());
+            //File
+            var fileMock = new Mock<IFormFile>();
+            fileMock.Setup(i => i.OpenReadStream()).Returns("Some text".ToStream());
+            fileMock.SetupGet(i => i.FileName).Returns("some.txt");
+
+            var actual = _controller.Put(modelMock.Object, new List<IFormFile>() {fileMock.Object}, 3);
+            var result = actual as OkObjectResult;
+            Assert.That(result, Is.Not.Null);
+
+            var after = _context.RealEstateObject.Count();
+
+            Assert.That(after, Is.EqualTo(before));
+
+            Assert.That(_context.RealEstateObjectFile.Count(i => i.RealEstateObjectId == 3), Is.EqualTo(3));
+            var newFile = _context.RealEstateObjectFile.LastOrDefault(i => i.RealEstateObjectId == 3);
+
+            var path = Path.Combine(Path.GetTempPath(), "photos", newFile.Name);
+            Assert.That(File.Exists(path), Is.True);
+
+            File.Delete(path);
+        }
     }
 }

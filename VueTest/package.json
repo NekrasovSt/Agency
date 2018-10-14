@@ -53,6 +53,7 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
     "jest": "^22.0.4",
+    "jest-json-schema": "^2.0.1",
     "jest-serializer-vue": "^0.3.0",
     "moxios": "^0.4.0",
     "node-notifier": "^5.1.2",

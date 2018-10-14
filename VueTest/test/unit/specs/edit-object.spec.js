@@ -7,7 +7,7 @@ import realEstateTypeSchema from '../schemas/realEstateType';
 expect.extend(matchers);
 
 describe('edit-object.vue', () => {
-  let wrapper;
+  let wrapper, pushCallback;
   it('все селекты кроме области не доступны в начале', () => {
     expect(wrapper.vm.regionSelected).toBeFalsy();
     expect(wrapper.vm.citySelected).toBeFalsy();
@@ -33,18 +33,24 @@ describe('edit-object.vue', () => {
   it('рендер', () => {
     expect(wrapper.find('h1').text()).toEqual('Заполните форму');
   });
-  beforeEach(function() {
+  beforeEach(function () {
     moxios.install();
-    URL.createObjectURL = function(temp) {
+    URL.createObjectURL = function (temp) {
 
     };
+    pushCallback = jest.fn();
     wrapper = mount(EditObject, {
       mocks: {
-        $route: {params: {}},
+        $route: {
+          params: {}
+        },
+        $router: {
+          push: pushCallback
+        }
       },
     });
   });
-  afterEach(function() {
+  afterEach(function () {
     moxios.uninstall();
   });
   it('если ид нет в параметрах то запрос на сервер не отправляется', (done) => {
@@ -115,8 +121,7 @@ describe('edit-object.vue', () => {
     });
     moxios.wait(() => {
       expect(moxios.requests.at(0).url).toEqual('odata/RealEstateObject(1)');
-      expect(moxios.requests.at(1).url).
-        toEqual('api/Address/GetParents?code=000001&building=5');
+      expect(moxios.requests.at(1).url).toEqual('api/Address/GetParents?code=000001&building=5');
       expect(moxios.requests.count()).toEqual(2);
       done();
     });
@@ -129,7 +134,7 @@ describe('edit-object.vue', () => {
 
     const wrp = mount(EditObject, {
       mocks: {
-        $route: {params: {}},
+        $route: {params: {}}
       },
     });
     expect(wrp.vm.images.length).toEqual(0);
@@ -198,7 +203,14 @@ describe('edit-object.vue', () => {
         new Uint16Array(documentBlob._buffer)));
 
       expect(json).toMatchSchema(realEstateTypeSchema);
-      done();
+      recent.respondWith({
+        status: 200,
+        response: {}
+      }).then(() => {
+        expect(pushCallback.mock.calls.length).toBe(1);
+        expect(pushCallback.mock.calls[0][0]).toEqual({name: 'objectList'});
+        done();
+      });
     });
   });
   it('обновление объекта', (done) => {
@@ -225,7 +237,14 @@ describe('edit-object.vue', () => {
         new Uint16Array(documentBlob._buffer)));
 
       expect(json).toMatchSchema(realEstateTypeSchema);
-      done();
+      recent.respondWith({
+        status: 200,
+        response: {}
+      }).then(() => {
+        expect(pushCallback.mock.calls.length).toBe(1);
+        expect(pushCallback.mock.calls[0][0]).toEqual({name: 'objectList'});
+        done();
+      });
     });
   });
 });

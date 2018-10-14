@@ -225,9 +225,10 @@
             {headers: {'Content-type': 'multipart/form-data'}});
         }
         promise.then(() => {
-          this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'});
-        }).catch(() => {
-          this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'});
+          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'}) : 0;
+          this.$router.push({name: 'objectList'});
+        }).catch((error) => {
+          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
         });
       },
       onRegionSearch(search, loading) {
@@ -288,6 +289,10 @@
 
         });
       }
+    },
+    mounted() {
+      if (window.componentHandler)
+        componentHandler.upgradeAllRegistered();
     },
   };
 </script>
