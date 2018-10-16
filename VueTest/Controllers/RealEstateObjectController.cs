@@ -63,7 +63,6 @@ namespace Agency.Web.Controllers
       _context.SaveChanges();
       return Created(model);
     }
-
     public IActionResult Put(IFormFile document, List<IFormFile> file, int key)
     {
       var oldModel = _context.RealEstateObject.Find(key);

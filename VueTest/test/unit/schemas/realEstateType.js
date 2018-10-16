@@ -1,4 +1,5 @@
 export default {
+  type: 'object',
   properties: {
     Floor: {type: 'string'},
     Rooms: {type: 'number'},

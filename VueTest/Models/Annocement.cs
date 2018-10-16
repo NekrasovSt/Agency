@@ -9,5 +9,6 @@ namespace Agency.Web.Models
     public int RealEstateObjectId { get; set; }
     public decimal Price { get; set; }
     public DateTimeOffset CreationDate { get; set; }
+    public AnnouncementType AnnouncementType { get; set; }
   }
 }

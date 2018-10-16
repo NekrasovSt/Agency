@@ -75,13 +75,17 @@
         <div class="mdl-layout-spacer"></div>
         <button
           class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent"
-          v-on:click="send()">
+          v-on:click="send()" v-bind:disabled="isInvalid">
           сохранить
         </button>
         <button class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect">
           Отмена
         </button>
       </div>
+    </div>
+    <div ref="snack" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
     </div>
   </div>
 </template>
@@ -122,6 +126,20 @@
           })
         }).finally(() => {
           loading(false);
+        });
+      },
+      send() {
+        let promise;
+        if (this.$route.params.id === undefined) {
+          promise = axios.post(`/odata/Announcement`, this.announcement);
+        } else {
+          promise = axios.put(`/odata/Announcement(${this.$route.params.id})`, this.announcement);
+        }
+        promise.then(() => {
+          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'}) : 0;
+          this.$router.push({name: 'objectList'});
+        }).catch((error) => {
+          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
         });
       }
     },
