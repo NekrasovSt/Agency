@@ -10,6 +10,7 @@ namespace Agency.Web.Models
     {
     }
 
+    public DbSet<Announcement> Announcement { get; set; }
     public DbSet<RealEstateObject> RealEstateObject { get; set; }
     public DbSet<RealEstateObjectFile> RealEstateObjectFile { get; set; }
 

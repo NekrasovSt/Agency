@@ -312,25 +312,4 @@
     display: none;
   }
 
-  .mdl-textfield__label--fixed {
-    color: rgb(158, 158, 158);
-    font-size: 12px;
-    top: 4px;
-  }
-
-  .v-select .dropdown-toggle {
-    border: none;
-  }
-
-  .v-select ul.dropdown-menu {
-    border: none;
-  }
-
-  .vs__selected-options {
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
-  }
-
-  .mdl-textfield--limited {
-    height: 67px;
-  }
 </style>

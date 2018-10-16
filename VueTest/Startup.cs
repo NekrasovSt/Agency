@@ -1,4 +1,5 @@
 ﻿using Agency.Web.Models;
+using Agency.Web.Utils;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,13 +37,15 @@ namespace Agency.Web
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env, AgencyContext context)
     {
       if (env.IsDevelopment())
       {
         app.UseDeveloperExceptionPage();
         var options = new WebpackDevMiddlewareOptions() {HotModuleReplacement = true};
         app.UseWebpackDevMiddleware(options);
+
+        DbInitializer.Initialize(context);
       }
 
       app.UseDefaultFiles();
