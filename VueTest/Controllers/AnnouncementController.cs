@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Agency.Web.Models;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agency.Web.Controllers
@@ -32,7 +34,7 @@ namespace Agency.Web.Controllers
         return NotFound();
       return Ok(obj);
     }
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Post(Announcement model)
     {
       if (!TryValidateModel(model) || !ModelState.IsValid)
@@ -45,6 +47,7 @@ namespace Agency.Web.Controllers
       _context.SaveChanges();
       return Created(model);
     }
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Put(Announcement model, int key)
     {
       var old = _context.Announcement.Find(key);

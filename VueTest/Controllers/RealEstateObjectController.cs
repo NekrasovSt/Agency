@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Agency.Web.Models;
 using Agency.Web.Utils;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Agency.Web.Controllers
 {
+  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
   public class RealEstateObjectController : ODataController
   {
     private readonly AgencyContext _context;
