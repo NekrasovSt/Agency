@@ -39,6 +39,7 @@
 
 <script>
   import axios from 'axios';
+  import auth from '@/miscellaneous/auth'
 
   export default {
     name: "Login",
@@ -56,7 +57,9 @@
     methods: {
       send() {
         let promise = axios.post('/Token', {Login: this.login, Password: this.password});
-        promise.then(() => {
+        promise.then((response) => {
+          auth.accessToken = response.data;
+
           this.$router.push({name: 'objectList'});
         }).catch((error) => {
           this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;

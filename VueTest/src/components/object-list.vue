@@ -84,6 +84,10 @@
                        class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
             Подробнее
           </router-link>
+          <router-link :to="'/edit-announcement/'+item.Id" v-if="auth.isAuthenticated"
+                       class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent">
+            Редактировать
+          </router-link>
         </div>
       </div>
     </div>
@@ -93,6 +97,7 @@
 <script>
   import axios from 'axios';
   import {realEstateTypes, count} from '../miscellaneous/real-estate-types';
+  import auth from '@/miscellaneous/auth'
 
   export default {
     name: 'ObjectList',
@@ -105,6 +110,7 @@
         priceFrom: null,
         priceTo: null,
         loading: false,
+        auth: auth
       };
     },
     computed: {

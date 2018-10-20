@@ -7,6 +7,7 @@ using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Agency.Web.Controllers
 {
@@ -29,11 +30,12 @@ namespace Agency.Web.Controllers
     [EnableQuery]
     public async Task<IActionResult> Get(int key)
     {
-      var obj = await _context.Announcement.FindAsync(key);
+      var obj = await _context.Announcement.Include(i => i.RealEstateObject).FirstOrDefaultAsync(i => i.Id == key);
       if (obj == null)
         return NotFound();
       return Ok(obj);
     }
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Post(Announcement model)
     {
@@ -47,6 +49,7 @@ namespace Agency.Web.Controllers
       _context.SaveChanges();
       return Created(model);
     }
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Put(Announcement model, int key)
     {

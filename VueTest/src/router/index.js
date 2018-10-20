@@ -9,15 +9,22 @@ import ObjectList from '@/components/object-list.vue';
 import Announcement from '@/components/announcement.vue';
 import EditAnnouncement from '@/components/edit-announcement.vue';
 import Login from '@/components/login.vue';
+import auth from '@/miscellaneous/auth'
+
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
+    {
+      path: '/',
+      redirect: '/main'
+    },
     {
       path: '/edit-object',
       name: 'editObject',
       component: EditObject,
+      meta: {requiresAuth: true}
     },
     {
       path: '/object-list/:type?',
@@ -25,7 +32,7 @@ export default new Router({
       component: ObjectList,
     },
     {
-      path: '/',
+      path: '/main',
       name: 'main',
       component: MainPage,
     },
@@ -55,6 +62,7 @@ export default new Router({
       path: '/edit-announcement/:id?',
       name: 'edit-announcement',
       component: EditAnnouncement,
+      meta: {requiresAuth: true}
     },
     {
       path: '/login',
@@ -63,3 +71,17 @@ export default new Router({
     },
   ],
 });
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) { // check the meta field
+    if (auth.isAuthenticated) { // check if the user is authenticated
+      next() // the next method allow the user to continue to the router
+    }
+    else {
+      next('/') // Redirect the user to the main page
+    }
+  }
+  else {
+    next();
+  }
+});
+export default router;
