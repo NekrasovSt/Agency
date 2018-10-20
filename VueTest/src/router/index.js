@@ -8,6 +8,7 @@ import Support from '@/components/support.vue';
 import ObjectList from '@/components/object-list.vue';
 import Announcement from '@/components/announcement.vue';
 import EditAnnouncement from '@/components/edit-announcement.vue';
+import Login from '@/components/login.vue';
 
 Vue.use(Router);
 
@@ -54,6 +55,11 @@ export default new Router({
       path: '/edit-announcement/:id?',
       name: 'edit-announcement',
       component: EditAnnouncement,
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
     },
   ],
 });
