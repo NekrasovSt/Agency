@@ -26,8 +26,12 @@ namespace Agency.Web
         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
         .AddEnvironmentVariables();
       builder.AddUserSecrets<Startup>();
+      //dotnet user-secrets set key value
       Configuration = builder.Build();
+      IsDevelopment = env.IsDevelopment();
     }
+
+    private bool IsDevelopment { get; set; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -35,7 +39,11 @@ namespace Agency.Web
     {
       services.AddMemoryCache();
 
-      services.AddDbContext<AgencyContext>(opt => opt.UseInMemoryDatabase("agency"));
+      if (IsDevelopment)
+        services.AddDbContext<AgencyContext>(opt => opt.UseInMemoryDatabase("agency"));
+      else
+        services.AddDbContext<AgencyContext>(
+          options => { options.UseNpgsql(Configuration["ConnectionString:Agency"]); });
 
       services.AddAuthentication(o =>
         {
@@ -80,8 +88,13 @@ namespace Agency.Web
         var options = new WebpackDevMiddlewareOptions() {HotModuleReplacement = true};
         app.UseWebpackDevMiddleware(options);
 
-        DbInitializer.Initialize(context);
+        DbInitializer.InitializeDevelop(context);
       }
+      else
+      {
+        DbInitializer.InitializaProduction(context);
+      }
+
       app.UseAuthentication();
       app.UseDefaultFiles();
       app.UseStaticFiles();
