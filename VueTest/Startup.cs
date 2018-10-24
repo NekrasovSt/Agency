@@ -25,10 +25,13 @@ namespace Agency.Web
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
         .AddEnvironmentVariables();
-      builder.AddUserSecrets<Startup>();
-      //dotnet user-secrets set key value
-      Configuration = builder.Build();
+
       IsDevelopment = env.IsDevelopment();
+      if (IsDevelopment)
+      {
+        builder.AddUserSecrets<Startup>();
+      }
+      Configuration = builder.Build();
     }
 
     private bool IsDevelopment { get; set; }

@@ -130,10 +130,14 @@
       },
       send() {
         let promise;
+        let obj = JSON.parse(JSON.stringify(this.announcement));
+        obj.RealEstateObjectId = obj.RealEstateObject.Id;
+        delete obj.RealEstateObject.title;
+
         if (this.$route.params.id === undefined) {
-          promise = axios.post(`/odata/Announcement`, this.announcement);
+          promise = axios.post(`/odata/Announcement`, obj);
         } else {
-          promise = axios.put(`/odata/Announcement(${this.$route.params.id})`, this.announcement);
+          promise = axios.put(`/odata/Announcement(${this.$route.params.id})`, obj);
         }
         promise.then(() => {
           this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'}) : 0;

@@ -37,7 +37,7 @@ namespace Agency.Web.Controllers
       if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, model.Password) !=
           PasswordVerificationResult.Success)
       {
-        return BadRequest();
+        return BadRequest(new {Message = "Неверный логин или пароль."});
       }
 
       var token = await GetJwtSecurityToken(user);

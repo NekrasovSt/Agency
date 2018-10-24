@@ -62,7 +62,8 @@
 
           this.$router.push({name: 'objectList'});
         }).catch((error) => {
-          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
+          let message = error && error.response.data.message ? error.response.data.message : 'Произошла ошибка!';
+          this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: message}) : 0;
         });
       }
     },

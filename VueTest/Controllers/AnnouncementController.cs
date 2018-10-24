@@ -37,7 +37,7 @@ namespace Agency.Web.Controllers
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IActionResult Post(Announcement model)
+    public IActionResult Post([FromBody]Announcement model)
     {
       if (!TryValidateModel(model) || !ModelState.IsValid)
       {

@@ -10,9 +10,19 @@
       <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
         <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
           <router-link class="mdl-navigation__link" to="/main" active-class="is-active">Главная</router-link>
-          <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active">Сертификаты</router-link>
-          <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active">Ипотека</router-link>
-          <router-link class="mdl-navigation__link" to="/support" active-class="is-active">Сопровождение</router-link>
+          <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active"
+                       v-if="!auth.isAuthenticated">Сертификаты
+          </router-link>
+          <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active"
+                       v-if="!auth.isAuthenticated">Ипотека
+          </router-link>
+          <router-link class="mdl-navigation__link" to="/support" active-class="is-active" v-if="!auth.isAuthenticated">
+            Сопровождение
+          </router-link>
+          <router-link class="mdl-navigation__link" to="/edit-announcement" v-if="auth.isAuthenticated">Объявление
+          </router-link>
+          <router-link class="mdl-navigation__link" to="/edit-object" v-if="auth.isAuthenticated">Объект недвижимости
+          </router-link>
           <button class="mdl-navigation__link menu-btn" v-on:click="logout()" v-if="auth.isAuthenticated">
             Выход
           </button>
@@ -37,16 +47,6 @@
   import auth from '@/miscellaneous/auth'
   import axios from 'axios';
 
-  axios.interceptors.request.use((config) => {
-    if (auth.isAuthenticated) {
-      Object.assign(config.headers, auth.header);
-    }
-    return config;
-  }, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  });
-
   export default {
     name: 'App',
     data() {
@@ -58,6 +58,26 @@
       logout() {
         this.auth.accessToken = null;
       }
+    },
+    created() {
+      let self = this;
+      axios.interceptors.request.use((config) => {
+        if (auth.isAuthenticated) {
+          Object.assign(config.headers, auth.header);
+        }
+        return config;
+      });
+      axios.interceptors.response.use((config) => config, error => {
+        if (error.response.status === 401) {
+          auth.accessToken = null;
+          self.$router.push({name: 'login'});
+        }
+        return Promise.reject(error);
+      });
+    },
+    beforeDestroy() {
+      axios.interceptors.request.handlers.length = 0;
+      axios.interceptors.response.handlers.length = 0;
     }
   }
 </script>

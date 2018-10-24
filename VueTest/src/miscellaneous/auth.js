@@ -7,7 +7,12 @@ const auth = {
       return null;
     return {'Authorization': 'Bearer ' + this.accessToken}
   },
-  accessToken: null
+  get accessToken() {
+    return localStorage.getItem('access_token');
+  },
+  set accessToken(value) {
+    localStorage.setItem('access_token', value);
+  }
 };
 
 export default auth

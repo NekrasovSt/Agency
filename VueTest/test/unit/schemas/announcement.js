@@ -12,5 +12,6 @@ export default {
         'Lease'],
     },
     RealEstateObject: realEstateType
-  }
+  },
+  additionalProperties: false
 }

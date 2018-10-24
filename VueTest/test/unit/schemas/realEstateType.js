@@ -1,6 +1,7 @@
 export default {
   type: 'object',
   properties: {
+    Id: {type: 'number'},
     Floor: {type: 'string'},
     Rooms: {type: 'number'},
     Square: {type: 'number'},
@@ -27,4 +28,5 @@ export default {
     'Building',
     'Code',
     'RealEstateType'],
+  additionalProperties: false
 };
