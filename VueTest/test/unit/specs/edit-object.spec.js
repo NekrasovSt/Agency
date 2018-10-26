@@ -151,6 +151,7 @@ describe('edit-object.vue', () => {
     expect(wrapper.vm.images.length).toEqual(1);
   });
   it('форма не валидна, пока все не заполнено', () => {
+    wrapper.vm.blockWatch = true;
     expect(wrapper.vm.isInvalid).toBeTruthy();
     wrapper.setData({currentRegion: {id: '000001', name: ''}});
     wrapper.setData({currentCity: {id: '000001', name: ''}});
@@ -165,6 +166,7 @@ describe('edit-object.vue', () => {
     expect(wrapper.vm.isInvalid).toBeFalsy();
   });
   it('форма не валидна, не верный формат этажей', () => {
+    wrapper.vm.blockWatch = true;
     wrapper.setData({currentRegion: {id: '000001', name: ''}});
     wrapper.setData({currentCity: {id: '000001', name: ''}});
     wrapper.setData({currentStreet: {id: '000001', name: ''}});
@@ -183,6 +185,7 @@ describe('edit-object.vue', () => {
   });
   it('отправка нового объекта', (done) => {
     expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.vm.blockWatch = true;
     wrapper.setData({
       currentRegion: {id: '000001', name: ''},
       currentCity: {id: '000001', name: ''},
@@ -215,6 +218,7 @@ describe('edit-object.vue', () => {
   });
   it('обновление объекта', (done) => {
     expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.vm.blockWatch = true;
     wrapper.setData({
       currentRegion: {id: '000001', name: ''},
       currentCity: {id: '000001', name: ''},
@@ -246,5 +250,71 @@ describe('edit-object.vue', () => {
         done();
       });
     });
+  });
+  it('Меняем регион', () => {
+    wrapper.vm.blockWatch = true;
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''}
+    });
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeDefined();
+    expect(wrapper.vm.currentStreet).toBeDefined();
+    expect(wrapper.vm.currentBuilding).toBeDefined();
+    wrapper.vm.blockWatch = false;
+    wrapper.setData({currentRegion: null});
+    wrapper.setData({currentRegion: {id: '000002', name: '2'}});
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeNull();
+    expect(wrapper.vm.currentStreet).toBeNull();
+    expect(wrapper.vm.currentBuilding).toBeNull();
+  });
+  it('Меняем город', () => {
+    wrapper.vm.blockWatch = true;
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''}
+    });
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeDefined();
+    expect(wrapper.vm.currentStreet).toBeDefined();
+    expect(wrapper.vm.currentBuilding).toBeDefined();
+    wrapper.vm.blockWatch = false;
+    wrapper.setData({currentCity: null});
+    wrapper.setData({currentCity: {id: '000002', name: '2'}});
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeDefined();
+    expect(wrapper.vm.currentStreet).toBeNull();
+    expect(wrapper.vm.currentBuilding).toBeNull();
+  });
+  it('Меняем улицу', () => {
+    wrapper.vm.blockWatch = true;
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''}
+    });
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeDefined();
+    expect(wrapper.vm.currentStreet).toBeDefined();
+    expect(wrapper.vm.currentBuilding).toBeDefined();
+    wrapper.vm.blockWatch = false;
+    wrapper.setData({currentStreet: null});
+    wrapper.setData({currentStreet: {id: '000002', name: '2'}});
+
+    expect(wrapper.vm.currentRegion).toBeDefined();
+    expect(wrapper.vm.currentCity).toBeDefined();
+    expect(wrapper.vm.currentStreet).toBeDefined();
+    expect(wrapper.vm.currentBuilding).toBeNull();
   });
 });

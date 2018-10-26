@@ -153,6 +153,7 @@
           {id: 'Apartment', name: 'Квартира'},
           {id: 'NewBuilding', name: 'Новостройка'},
           {id: 'House', name: 'Дом'}],
+        blockWatch: false,
       };
     },
     computed: {
@@ -267,6 +268,7 @@
     },
     created() {
       if (this.$route.params.id !== undefined) {
+        this.blockWatch = true;
         let url = `odata/RealEstateObject(${this.$route.params.id})`;
         axios.get(url).then(response => {
           this.item = response.data;
@@ -276,23 +278,32 @@
 
           return axios.get(`api/Address/GetParents?code=${this.item.Code}&building=${this.item.Building}`);
         }).then(response => {
-          response.data.parents.forEach(parent => {
-            if (parent.contentType === 'region') {
-              this.currentRegion = parent;
-            }
-            if (parent.contentType === 'city') {
-              this.currentCity = parent;
-            }
-            if (parent.contentType === 'street') {
-              this.currentStreet = parent;
-            }
-            this.currentBuilding = response.data;
-          });
+          this.currentRegion = response.data.parents.find(parent => parent.contentType === 'region');
+          this.currentCity = response.data.parents.find(parent => parent.contentType === 'city');
+          this.currentStreet = response.data.parents.find(parent => parent.contentType === 'street');
+          this.currentBuilding = response.data;
         }).catch(error => {
 
         }).finally(() => {
-
+          this.blockWatch = false;
         });
+      }
+    },
+    watch: {
+      currentRegion: function (nw, old) {
+        if (this.blockWatch)
+          return;
+        this.currentCity = null;
+      },
+      currentCity: function (nw, old) {
+        if (this.blockWatch)
+          return;
+        this.currentStreet = null;
+      },
+      currentStreet: function (ne, old) {
+        if (this.blockWatch)
+          return;
+        this.currentBuilding = null;
       }
     },
     mounted() {
