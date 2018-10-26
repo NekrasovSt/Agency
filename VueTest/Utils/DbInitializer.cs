@@ -26,7 +26,7 @@ namespace Agency.Web.Utils
             Rooms = 1,
             Square = 23.4,
             Street = "Ленина",
-            Code = "59000000123"
+            Code = "5900000100006330102"
           }
         });
         context.Announcement.Add(new Announcement()

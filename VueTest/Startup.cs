@@ -105,7 +105,7 @@ namespace Agency.Web
 
       app.UseMvc(routes =>
       {
-        routes.Select().Expand().Filter().OrderBy().Count();
+        routes.Select().Expand().Filter().OrderBy().Count().MaxTop(1000);
         routes.MapODataServiceRoute("odata", "odata", ModelBuilder.GetEdmModel(app.ApplicationServices));
         routes.MapRoute(
           name: "default",

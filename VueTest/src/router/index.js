@@ -10,7 +10,7 @@ import Announcement from '@/components/announcement.vue';
 import EditAnnouncement from '@/components/edit-announcement.vue';
 import Login from '@/components/login.vue';
 import auth from '@/miscellaneous/auth'
-
+import RealEstateObjectList from '@/components/real-estate-object-list.vue';
 
 Vue.use(Router);
 
@@ -21,7 +21,7 @@ const router = new Router({
       redirect: '/main'
     },
     {
-      path: '/edit-object',
+      path: '/edit-object/:id?',
       name: 'editObject',
       component: EditObject,
       meta: {requiresAuth: true}
@@ -69,6 +69,12 @@ const router = new Router({
       name: 'login',
       component: Login,
     },
+    {
+      path: '/real-estate-object-list',
+      name: 'real-estate-object-list',
+      component: RealEstateObjectList,
+      meta: {requiresAuth: true}
+    }
   ],
 });
 router.beforeEach((to, from, next) => {

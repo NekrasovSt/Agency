@@ -270,9 +270,13 @@
         let url = `odata/RealEstateObject(${this.$route.params.id})`;
         axios.get(url).then(response => {
           this.item = response.data;
+          this.rooms = response.data.Rooms;
+          this.floor = response.data.Floor;
+          this.square = response.data.Square;
+
           return axios.get(`api/Address/GetParents?code=${this.item.Code}&building=${this.item.Building}`);
         }).then(response => {
-          response.data.result[0].parents.forEach(parent => {
+          response.data.parents.forEach(parent => {
             if (parent.contentType === 'region') {
               this.currentRegion = parent;
             }
@@ -282,6 +286,7 @@
             if (parent.contentType === 'street') {
               this.currentStreet = parent;
             }
+            this.currentBuilding = response.data;
           });
         }).catch(error => {
 
