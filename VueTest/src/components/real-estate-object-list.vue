@@ -46,14 +46,14 @@
           <button class="mdl-button mdl-js-button mdl-button--icon" title="Удалить">
             <i class="material-icons">delete</i>
           </button>
-          <button class="mdl-button mdl-js-button mdl-button--icon" title="Создать объявление">
+          <router-link class="mdl-button mdl-js-button mdl-button--icon" title="Создать объявление"
+                       :to="'/edit-announcement?basedOn=' + item.Id">
             <i class="material-icons">new_releases</i>
-          </button>
+          </router-link>
         </td>
       </tr>
       </tbody>
     </table>
-
   </div>
 </template>
 

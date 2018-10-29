@@ -1,6 +1,6 @@
 import moxios from "moxios";
 import EditAnnouncement from '@/components/edit-announcement';
-import {mount} from "@vue/test-utils";
+import {mount, shallowMount} from "@vue/test-utils";
 import announcement from "../schemas/announcement";
 import {matchers} from 'jest-json-schema';
 
@@ -10,11 +10,12 @@ describe('edit-announcement.vue', () => {
   let wrapper, pushCallback;
   const $route = {
     params: {},
+    query: {}
   };
   beforeEach(function () {
     pushCallback = jest.fn();
     moxios.install();
-    wrapper = mount(EditAnnouncement, {
+    wrapper = shallowMount(EditAnnouncement, {
       mocks: {
         $route,
         $router: {
@@ -61,9 +62,9 @@ describe('edit-announcement.vue', () => {
   });
   it('обновление объекта', (done) => {
 
-    wrapper = mount(EditAnnouncement, {
+    wrapper = shallowMount(EditAnnouncement, {
       mocks: {
-        $route: {params: {id: 23}},
+        $route: {params: {id: 23}, query: {}},
         $router: {
           push: pushCallback
         }
@@ -86,6 +87,60 @@ describe('edit-announcement.vue', () => {
       }).then(() => {
         expect(pushCallback.mock.calls.length).toBe(1);
         expect(pushCallback.mock.calls[0][0]).toEqual({name: 'objectList'});
+        done();
+      });
+    });
+  });
+
+  it('загрузка на редактирование', done => {
+    wrapper = shallowMount(EditAnnouncement, {
+      mocks: {
+        $route: {
+          params: {id: 10},
+          query: {}
+        },
+        $router: {
+          push: pushCallback
+        }
+      },
+    });
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      expect(recent.url).toEqual('/odata/Announcement(10)?$expand=RealEstateObject');
+      expect(recent.config.method).toEqual('get');
+      const json = recent.config.data;
+      recent.respondWith({
+        status: 200,
+        response: {Id: 10, Description: 'Bla bla', RealEstateObject: {}}
+      }).then(() => {
+        expect(wrapper.vm.announcement).toBeDefined();
+        expect(wrapper.vm.announcement.RealEstateObject).toBeDefined();
+        expect(wrapper.vm.announcement.RealEstateObject.title).toBeDefined();
+        done();
+      });
+    });
+  });
+  it('создание на базе объекта, проверка загрузки', done => {
+    wrapper = shallowMount(EditAnnouncement, {
+      mocks: {
+        $route: {
+          query: {basedOn: 99},
+          params: {}
+        }
+      },
+    });
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      expect(recent.url).toEqual('/odata/RealEstateObject(99)');
+      expect(recent.config.method).toEqual('get');
+      const json = recent.config.data;
+      recent.respondWith({
+        status: 200,
+        response: {Id: 10, Description: 'Bla bla'}
+      }).then(() => {
+        expect(wrapper.vm.announcement).toBeDefined();
+        expect(wrapper.vm.announcement.RealEstateObject).toBeDefined();
+        expect(wrapper.vm.announcement.RealEstateObject.title).toBeDefined();
         done();
       });
     });

@@ -147,6 +147,28 @@
         });
       }
     },
+    created() {
+      if (this.$route.params.id !== undefined) {
+        let url = `/odata/Announcement(${this.$route.params.id})?$expand=RealEstateObject`;
+        axios.get(url).then(response => {
+          this.announcement = response.data;
+          this.announcement.RealEstateObject.title = this.label(this.announcement.RealEstateObject);
+        })
+          .catch(() => {
+            this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
+          });
+      }
+      if (this.$route.query.basedOn !== undefined) {
+        let url = `/odata/RealEstateObject(${this.$route.query.basedOn})`;
+        axios.get(url).then(response => {
+          this.announcement.RealEstateObject = response.data;
+          this.announcement.RealEstateObject.title = this.label(this.announcement.RealEstateObject);
+        })
+          .catch(() => {
+            this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
+          });
+      }
+    },
     mounted() {
       if (window.componentHandler)
         componentHandler.upgradeAllRegistered();
