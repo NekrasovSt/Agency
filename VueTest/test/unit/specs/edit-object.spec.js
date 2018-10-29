@@ -42,7 +42,8 @@ describe('edit-object.vue', () => {
     wrapper = mount(EditObject, {
       mocks: {
         $route: {
-          params: {}
+          params: {},
+          query: {}
         },
         $router: {
           push: pushCallback
@@ -212,6 +213,86 @@ describe('edit-object.vue', () => {
       }).then(() => {
         expect(pushCallback.mock.calls.length).toBe(1);
         expect(pushCallback.mock.calls[0][0]).toEqual({name: 'objectList'});
+        done();
+      });
+    });
+  });
+  it('отправка нового объекта - переход с нового объявления', (done) => {
+    pushCallback = jest.fn();
+    wrapper = mount(EditObject, {
+      mocks: {
+        $route: {
+          params: {},
+          query: {basedOn: 'new'}
+
+        },
+        $router: {
+          push: pushCallback
+        }
+      },
+    });
+
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.vm.blockWatch = true;
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      floor: '2/5',
+      square: 23.5,
+      rooms: 3,
+    });
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+    wrapper.vm.send();
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      recent.respondWith({
+        status: 200,
+        response: {Id: 10}
+      }).then(() => {
+        expect(pushCallback.mock.calls.length).toBe(1);
+        expect(pushCallback.mock.calls[0][0]).toEqual({name: 'edit-announcement', query: {basedOn: 10}});
+        done();
+      });
+    });
+  });
+  it('отправка нового объекта - переход с редактирования объявления', (done) => {
+    pushCallback = jest.fn();
+    wrapper = mount(EditObject, {
+      mocks: {
+        $route: {
+          params: {},
+          query: {basedOn: '15'}
+
+        },
+        $router: {
+          push: pushCallback
+        }
+      },
+    });
+
+    expect(wrapper.vm.isInvalid).toBeTruthy();
+    wrapper.vm.blockWatch = true;
+    wrapper.setData({
+      currentRegion: {id: '000001', name: ''},
+      currentCity: {id: '000001', name: ''},
+      currentBuilding: {id: '000001', name: ''},
+      currentStreet: {id: '000001', name: ''},
+      floor: '2/5',
+      square: 23.5,
+      rooms: 3,
+    });
+    expect(wrapper.vm.isInvalid).toBeFalsy();
+    wrapper.vm.send();
+    moxios.wait(() => {
+      const recent = moxios.requests.mostRecent();
+      recent.respondWith({
+        status: 200,
+        response: {Id: 10}
+      }).then(() => {
+        expect(pushCallback.mock.calls.length).toBe(1);
+        expect(pushCallback.mock.calls[0][0]).toEqual({name: 'edit-announcement', query: {basedOn: 10}, params: {id: '15'}});
         done();
       });
     });

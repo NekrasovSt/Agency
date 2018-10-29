@@ -18,6 +18,10 @@
             </v-select>
             <label class="mdl-textfield__label mdl-textfield__label--fixed" for="object">Объект</label>
           </div>
+          <router-link class="mdl-button mdl-js-button mdl-button--icon" title="Создать объявление"
+                       :to="redirectToObject">
+            <i class="material-icons">new_releases</i>
+          </router-link>
         </div>
         <div class="mdl-cell mdl-cell--6-col">
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -109,6 +113,9 @@
           !this.announcement.RealEstateObject ||
           this.announcement.RealEstateObject.Id === undefined ||
           !/^[0-9]+(\.[0-9]+)?/.test(this.announcement.Price);
+      },
+      redirectToObject() {
+        return  this.$route.params.id === undefined ?  '/edit-object?basedOn=new' : `/edit-object?basedOn=${this.$route.params.id}`
       }
     },
     methods: {
@@ -133,6 +140,7 @@
         let obj = JSON.parse(JSON.stringify(this.announcement));
         obj.RealEstateObjectId = obj.RealEstateObject.Id;
         delete obj.RealEstateObject.title;
+        delete obj.RealEstateObject['@odata.context'];
 
         if (this.$route.params.id === undefined) {
           promise = axios.post(`/odata/Announcement`, obj);

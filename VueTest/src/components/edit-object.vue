@@ -225,9 +225,20 @@
           promise = axios.put(`/odata/RealEstateObject(${this.$route.params.id})`, formData,
             {headers: {'Content-type': 'multipart/form-data'}});
         }
-        promise.then(() => {
+        promise.then(response => {
           this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Данные успешно сохранены!'}) : 0;
-          this.$router.push({name: 'objectList'});
+          if (this.$route.query.basedOn === 'new') {
+            this.$router.push({name: 'edit-announcement', query: {basedOn: response.data.Id}});
+          } else if (this.$route.query.basedOn !== undefined) {
+            this.$router.push({
+              name: 'edit-announcement',
+              query: {basedOn: response.data.Id},
+              params: {id: this.$route.query.basedOn}
+            });
+          }
+          else {
+            this.$router.push({name: 'objectList'});
+          }
         }).catch((error) => {
           this.$refs.snack.MaterialSnackbar ? this.$refs.snack.MaterialSnackbar.showSnackbar({message: 'Произошла ошибка!'}) : 0;
         });

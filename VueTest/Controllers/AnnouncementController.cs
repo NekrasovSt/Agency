@@ -51,7 +51,7 @@ namespace Agency.Web.Controllers
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IActionResult Put(Announcement model, int key)
+    public IActionResult Put([FromBody]Announcement model, int key)
     {
       var old = _context.Announcement.Find(key);
       if (old == null)
