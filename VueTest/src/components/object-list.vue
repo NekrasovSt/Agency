@@ -6,7 +6,7 @@
          v-bind:class="{'mdl-progress mdl-progress__indeterminate': loading}"></div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-card mdl-shadow--4dp ">
       <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text">Параметры фильтрации</h2>
+        <h2 class="mdl-card__title-text">Параметры поиска</h2>
       </div>
       <div class="mdl-grid mdl-card__actions">
         <!--Тип недвижимости-->
@@ -64,7 +64,7 @@
     <div class="mdl-cell mdl-grid  mdl-cell--12-col mdl-cell--4-col-tablet mdl-card mdl-shadow--4dp"
          v-for="item in announcements">
       <div class="mdl-card__media mdl-cell mdl-cell--12-col-tablet">
-        <img class="article-image" src=" images/example-blog01.jpg" border="0" alt="">
+        <img class="article-image" v-bind:src="getUrl(item)" border="0" alt="">
       </div>
       <div class="mdl-cell mdl-cell--8-col">
         <h2 class="mdl-card__title-text">{{item.RealEstateObject.Rooms}} ком. {{item.RealEstateObject.Square}} кв.м.
@@ -107,7 +107,7 @@
         announcements: null,
         types: [],
         rooms: [],
-        priceFrom: null,
+        priceFrom: 0,
         priceTo: null,
         loading: false,
         auth: auth
@@ -124,6 +124,11 @@
       },
     },
     methods: {
+      getUrl(obj) {
+        if (obj.RealEstateObject && obj.RealEstateObject.RealEstateObjectFile.length !== 0) {
+          return `/photos/${obj.RealEstateObject.RealEstateObjectFile[0].Name}`
+        }
+      },
       refresh() {
         let url = `odata/Announcement?$expand=RealEstateObject`;
 
@@ -177,7 +182,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 7;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header mdl-layout__header--waterfall portfolio-header">
+    <header class="mdl-layout__header portfolio-header">
       <div class="mdl-layout__header-row portfolio-logo-row">
                 <span class="mdl-layout__title">
                     <div class="portfolio-logo"></div>
@@ -32,13 +32,42 @@
     <div class="mdl-layout__drawer mdl-layout--small-screen-only">
       <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
         <router-link class="mdl-navigation__link" to="/">Главная</router-link>
-        <a class="mdl-navigation__link" href="blog.html">Blog</a>
-        <a class="mdl-navigation__link" href="about.html">About</a>
-        <a class="mdl-navigation__link" href="contact.html">Contact</a>
+        <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active"
+                     v-if="!auth.isAuthenticated">Сертификаты
+        </router-link>
+        <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active"
+                     v-if="!auth.isAuthenticated">Ипотека
+        </router-link>
+        <router-link class="mdl-navigation__link" to="/support" active-class="is-active" v-if="!auth.isAuthenticated">
+          Сопровождение
+        </router-link>
+        <router-link class="mdl-navigation__link" to="/edit-announcement" v-if="auth.isAuthenticated">Объявление
+        </router-link>
+        <router-link class="mdl-navigation__link" to="/edit-object" v-if="auth.isAuthenticated">Объект недвижимости
+        </router-link>
+        <button class="mdl-navigation__link menu-btn" v-on:click="logout()" v-if="auth.isAuthenticated">
+          Выход
+        </button>
       </nav>
     </div>
-    <main class="mdl-layout__content">
+    <main class="">
       <router-view/>
+      <div class="mdl-layout-spacer"></div>
+      <footer class="mdl-mini-footer">
+        <div class="mdl-mini-footer__left-section">
+          <ul class="mdl-mini-footer__link-list">
+            <li>
+              <router-link to="/">Главная</router-link>
+            </li>
+            <li>
+              <router-link to="/object-list">Объявления</router-link>
+            </li>
+          </ul>
+        </div>
+        <div class="mdl-mini-footer__right-section">
+          <div class="mdl-logo">By Nek</div>
+        </div>
+      </footer>
     </main>
   </div>
 </template>
@@ -86,5 +115,29 @@
   .menu-btn {
     border: none;
     background-color: transparent;
+  }
+
+  footer.mdl-mini-footer {
+    flex-basis: 63px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 16px;
+  }
+
+  main {
+    background-color: white;
+  }
+
+  body {
+    background-color: #424242;
+  }
+
+  .page-placeholder {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-placeholder > div {
+    flex-grow: 1;
   }
 </style>
