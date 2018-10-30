@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Agency.Web.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -122,6 +123,35 @@ namespace Agency.Web.Utils
             Square = 33.4,
             Street = "Ленина",
             Code = "59000000123"
+          }
+        });
+        context.Announcement.Add(new Announcement()
+        {
+          Price = 1500000,
+          CreationDate = DateTimeOffset.Now,
+          RealEstateObject = new RealEstateObject()
+          {
+            RealEstateType = RealEstateType.Apartment,
+            Building = "5",
+            City = "Пермь",
+            Description = "Убитая хата",
+            Floor = "3/5",
+            Region = "Пермский край",
+            Rooms = 3,
+            Square = 33.4,
+            Street = "Васькина",
+            Code = "59000000123",
+            RealEstateObjectFile = new HashSet<RealEstateObjectFile>()
+            {
+              new RealEstateObjectFile()
+              {
+                Name = "4a8f355d-8324-4bb0-b562-d2ce6deb8289.jpg",
+              },
+              new RealEstateObjectFile()
+              {
+                Name = "8a6ec0d5-65e1-489b-933b-b65f00458f4b.jpg",
+              }
+            }
           }
         });
         context.SaveChanges();

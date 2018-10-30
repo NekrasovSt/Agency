@@ -24,13 +24,16 @@ namespace Agency.Web.Controllers
     [EnableQuery]
     public IQueryable<Announcement> Get()
     {
-      return _context.Announcement;
+      return _context.Announcement.Include(i => i.RealEstateObject.RealEstateObjectFile);
     }
 
     [EnableQuery]
     public async Task<IActionResult> Get(int key)
     {
-      var obj = await _context.Announcement.Include(i => i.RealEstateObject).FirstOrDefaultAsync(i => i.Id == key);
+      var obj = await _context.Announcement
+        .Include(i => i.RealEstateObject)
+        .Include(i => i.RealEstateObject.RealEstateObjectFile)
+        .FirstOrDefaultAsync(i => i.Id == key);
       if (obj == null)
         return NotFound();
       return Ok(obj);
