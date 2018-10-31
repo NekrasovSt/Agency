@@ -1,6 +1,6 @@
 import moxios from "moxios";
 import Announcement from '@/components/announcement';
-import {mount} from "@vue/test-utils";
+import {mount, shallowMount} from "@vue/test-utils";
 
 describe('announcement.vue', () => {
   let wrapper;
@@ -9,10 +9,11 @@ describe('announcement.vue', () => {
   };
   beforeEach(function () {
     moxios.install();
-    wrapper = mount(Announcement, {
+    wrapper = shallowMount(Announcement, {
       mocks: {
         $route,
       },
+      stubs: ['router-link']
     });
   });
 
@@ -20,10 +21,11 @@ describe('announcement.vue', () => {
     moxios.uninstall();
   });
   test('запрос на сервер после создания компонента', done => {
-    mount(Announcement, {
+    shallowMount(Announcement, {
       mocks: {
         $route: {params: {id: 1}},
       },
+      stubs: ['router-link']
     });
     moxios.wait(() => {
       let request = moxios.requests.mostRecent();

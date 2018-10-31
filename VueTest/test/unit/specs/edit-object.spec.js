@@ -1,5 +1,5 @@
 import EditObject from '@/components/edit-object';
-import {mount} from '@vue/test-utils';
+import {mount, shallowMount} from '@vue/test-utils';
 import moxios from 'moxios';
 import {matchers} from 'jest-json-schema';
 import realEstateTypeSchema from '../schemas/realEstateType';
@@ -39,7 +39,7 @@ describe('edit-object.vue', () => {
 
     };
     pushCallback = jest.fn();
-    wrapper = mount(EditObject, {
+    wrapper = shallowMount(EditObject, {
       mocks: {
         $route: {
           params: {},
@@ -49,16 +49,18 @@ describe('edit-object.vue', () => {
           push: pushCallback
         }
       },
+      stubs: ['router-link']
     });
   });
   afterEach(function () {
     moxios.uninstall();
   });
   it('если ид нет в параметрах то запрос на сервер не отправляется', (done) => {
-    mount(EditObject, {
+    shallowMount(EditObject, {
       mocks: {
         $route: {params: {}},
       },
+      stubs: ['router-link']
     });
     setTimeout(() => {
       expect(moxios.requests.count()).toEqual(0);
@@ -115,10 +117,11 @@ describe('edit-object.vue', () => {
           ],
         },
     });
-    mount(EditObject, {
+    shallowMount(EditObject, {
       mocks: {
         $route: {params: {id: 1}},
       },
+      stubs: ['router-link']
     });
     moxios.wait(() => {
       expect(moxios.requests.at(0).url).toEqual('odata/RealEstateObject(1)');
@@ -219,7 +222,7 @@ describe('edit-object.vue', () => {
   });
   it('отправка нового объекта - переход с нового объявления', (done) => {
     pushCallback = jest.fn();
-    wrapper = mount(EditObject, {
+    wrapper = shallowMount(EditObject, {
       mocks: {
         $route: {
           params: {},
@@ -259,7 +262,7 @@ describe('edit-object.vue', () => {
   });
   it('отправка нового объекта - переход с редактирования объявления', (done) => {
     pushCallback = jest.fn();
-    wrapper = mount(EditObject, {
+    wrapper = shallowMount(EditObject, {
       mocks: {
         $route: {
           params: {},
@@ -270,6 +273,7 @@ describe('edit-object.vue', () => {
           push: pushCallback
         }
       },
+      stubs: ['router-link']
     });
 
     expect(wrapper.vm.isInvalid).toBeTruthy();

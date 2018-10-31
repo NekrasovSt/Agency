@@ -22,6 +22,7 @@ describe('edit-announcement.vue', () => {
           push: pushCallback
         }
       },
+      stubs: ['router-link']
     });
   });
 
@@ -69,6 +70,7 @@ describe('edit-announcement.vue', () => {
           push: pushCallback
         }
       },
+      stubs: ['router-link']
     });
 
     wrapper.setData({announcement: {Price: 10000, RealEstateObject: {Id: 100, title: 'name'}}});
@@ -103,6 +105,7 @@ describe('edit-announcement.vue', () => {
           push: pushCallback
         }
       },
+      stubs: ['router-link']
     });
     moxios.wait(() => {
       const recent = moxios.requests.mostRecent();
@@ -128,6 +131,7 @@ describe('edit-announcement.vue', () => {
           params: {}
         }
       },
+      stubs: ['router-link']
     });
     moxios.wait(() => {
       const recent = moxios.requests.mostRecent();

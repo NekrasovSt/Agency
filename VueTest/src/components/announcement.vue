@@ -23,9 +23,15 @@
       <div class="mdl-cell mdl-cell--12-col mdl-card__supporting-text" v-if="item">
         {{item.RealEstateObject.Description}}
       </div>
+      <div class="mdl-cell mdl-cell--12-col map" ref="map">
+
+
+      </div>
       <div class="mdl-card__actions mdl-card--border mdl-grid">
         <div class="mdl-layout-spacer"></div>
-        <router-link class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent" to="/object-list">
+        <router-link
+          class="mdl-button mdl-js-button mdl-button--primary mdl-button--colored mdl-js-ripple-effect mdl-button--accent"
+          to="/object-list">
           Назад
         </router-link>
       </div>
@@ -42,18 +48,56 @@
       return {item: null};
     },
     created() {
+      let self = this;
       let url = `odata/Announcement(${this.$route.params.id})?$expand=RealEstateObject`;
-      axios.get(url).then(response => {
+      let promise = axios.get(url);
+      promise.then(response => {
         this.item = response.data;
       }).catch(error => {
 
       }).finally(() => {
 
       });
+      if (!window.ymaps)
+        return;
+      ymaps.ready(() => {
+        self.myMap = new ymaps.Map(self.$refs.map, {
+          center: [58.005818, 56.234205],
+          zoom: 10,
+          controls: ['geolocationControl', 'fullscreenControl', 'zoomControl'],
+        });
+        promise.then(response => {
+          let address = `${response.data.RealEstateObject.City}, ${response.data.RealEstateObject.Street}, ${response.data.RealEstateObject.Building}`;
+          return ymaps.geocode(address);
+        }).then(res => {
+          let firstGeoObject = res.geoObjects.get(0),
+            // Координаты геообъекта.
+            coords = firstGeoObject.geometry.getCoordinates(),
+            // Область видимости геообъекта.
+            bounds = firstGeoObject.properties.get('boundedBy');
+
+          firstGeoObject.options.set('preset', 'islands#darkBlueDotIconWithCaption');
+          // Получаем строку с адресом и выводим в иконке геообъекта.
+          firstGeoObject.properties.set('iconCaption', firstGeoObject.getAddressLine());
+
+          // Добавляем первый найденный геообъект на карту.
+          self.myMap.geoObjects.add(firstGeoObject);
+          // Масштабируем карту на область видимости геообъекта.
+          self.myMap.setBounds(bounds, {
+            // Проверяем наличие тайлов на данном масштабе.
+            checkZoomRange: true
+          });
+        });
+      });
     },
+    beforeDestroy() {
+      this.myMap.destroy();
+    }
   };
 </script>
 
 <style scoped>
-
+  .map {
+    height: 400px;
+  }
 </style>
