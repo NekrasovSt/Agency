@@ -1,9 +1,6 @@
 <template>
 
   <div class="mdl-grid portfolio-max-width">
-    <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-js-progress mdl-progress--accent"
-         style="height: 4px"
-         v-bind:class="{'mdl-progress mdl-progress__indeterminate': loading}"></div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-card mdl-shadow--4dp ">
       <div class="mdl-card__title">
         <h2 class="mdl-card__title-text">Параметры поиска</h2>

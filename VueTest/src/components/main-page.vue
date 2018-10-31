@@ -28,7 +28,7 @@
       </div>
       <div class="mdl-card__actions mdl-card--border">
         <router-link class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent"
-                     to="/object-list/new-buildings">Read more
+                     to="/object-list/newBuilding">Read more
         </router-link>
       </div>
     </div>

@@ -11,7 +11,10 @@ const auth = {
     return localStorage.getItem('access_token');
   },
   set accessToken(value) {
-    localStorage.setItem('access_token', value);
+    if (value)
+      localStorage.setItem('access_token', value);
+    else
+      localStorage.removeItem('access_token');
   }
 };
 

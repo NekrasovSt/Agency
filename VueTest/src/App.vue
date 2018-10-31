@@ -4,24 +4,18 @@
       <div class="mdl-layout__header-row portfolio-logo-row">
                 <span class="mdl-layout__title">
                     <div class="portfolio-logo"></div>
-                    <span class="mdl-layout__title">Simple portfolio website</span>
+                    <span class="mdl-layout__title">Чтобы продать что-нибудь ненужное, нужно сначала купить что-нибудь ненужное, а у нас денег нет</span>
                 </span>
       </div>
       <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
         <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
           <router-link class="mdl-navigation__link" to="/main" active-class="is-active">Главная</router-link>
-          <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active"
-                       v-if="!auth.isAuthenticated">Сертификаты
+          <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active">Сертификаты
           </router-link>
-          <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active"
-                       v-if="!auth.isAuthenticated">Ипотека
+          <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active">Ипотека
           </router-link>
-          <router-link class="mdl-navigation__link" to="/support" active-class="is-active" v-if="!auth.isAuthenticated">
+          <router-link class="mdl-navigation__link" to="/support" active-class="is-active">
             Сопровождение
-          </router-link>
-          <router-link class="mdl-navigation__link" to="/edit-announcement" v-if="auth.isAuthenticated">Объявление
-          </router-link>
-          <router-link class="mdl-navigation__link" to="/edit-object" v-if="auth.isAuthenticated">Объект недвижимости
           </router-link>
           <button class="mdl-navigation__link menu-btn" v-on:click="logout()" v-if="auth.isAuthenticated">
             Выход
@@ -32,39 +26,54 @@
     <div class="mdl-layout__drawer mdl-layout--small-screen-only">
       <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
         <router-link class="mdl-navigation__link" to="/">Главная</router-link>
-        <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active"
-                     v-if="!auth.isAuthenticated">Сертификаты
+        <router-link class="mdl-navigation__link" to="/certificate" active-class="is-active">Сертификаты
         </router-link>
-        <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active"
-                     v-if="!auth.isAuthenticated">Ипотека
+        <router-link class="mdl-navigation__link" to="/mortgage" active-class="is-active">Ипотека
         </router-link>
-        <router-link class="mdl-navigation__link" to="/support" active-class="is-active" v-if="!auth.isAuthenticated">
+        <router-link class="mdl-navigation__link" to="/support" active-class="is-active">
           Сопровождение
-        </router-link>
-        <router-link class="mdl-navigation__link" to="/edit-announcement" v-if="auth.isAuthenticated">Объявление
-        </router-link>
-        <router-link class="mdl-navigation__link" to="/edit-object" v-if="auth.isAuthenticated">Объект недвижимости
         </router-link>
         <button class="mdl-navigation__link menu-btn" v-on:click="logout()" v-if="auth.isAuthenticated">
           Выход
         </button>
       </nav>
     </div>
-    <main class="">
+    <main>
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-tablet mdl-js-progress mdl-progress--accent"
+           style="height: 4px"
+           v-bind:class="{'mdl-progress mdl-progress__indeterminate': numLoadings !== 0}"></div>
       <router-view/>
-      <div class="mdl-layout-spacer"></div>
-      <footer class="mdl-mini-footer">
-        <div class="mdl-mini-footer__left-section">
-          <ul class="mdl-mini-footer__link-list">
-            <li>
-              <router-link to="/">Главная</router-link>
-            </li>
-            <li>
-              <router-link to="/object-list">Объявления</router-link>
-            </li>
-          </ul>
+      <footer class="mdl-mega-footer">
+        <div class="mdl-mega-footer__middle-section">
+          <div class="mdl-mega-footer__drop-down-section">
+            <input class="mdl-mega-footer__heading-checkbox" type="checkbox" checked>
+            <h1 class="mdl-mega-footer__heading">Главная</h1>
+            <ul class="mdl-mega-footer__link-list">
+              <li>
+                <router-link to="/object-list/apartment">Квартиры</router-link>
+              </li>
+              <li>
+                <router-link to="/object-list/newBuilding">Новостройки</router-link>
+              </li>
+              <li>
+                <router-link to="/object-list/house">Дом</router-link>
+              </li>
+            </ul>
+          </div>
+          <div class="mdl-mega-footer__drop-down-section" v-if="auth.isAuthenticated">
+            <input class="mdl-mega-footer__heading-checkbox" type="checkbox" checked>
+            <h1 class="mdl-mega-footer__heading">Администрирование</h1>
+            <ul class="mdl-mega-footer__link-list">
+              <li>
+                <router-link to="/real-estate-object-list">Объекты недвижимости</router-link>
+              </li>
+              <li>
+                <router-link to="/object-list">Объявления</router-link>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="mdl-mini-footer__right-section">
+        <div class="mdl-mega-footer__bottom-section mdl-mega-footer__bottom-section_right">
           <div class="mdl-logo">By Nek</div>
         </div>
       </footer>
@@ -80,7 +89,8 @@
     name: 'App',
     data() {
       return {
-        auth: auth
+        auth: auth,
+        numLoadings: 0
       }
     },
     methods: {
@@ -91,12 +101,16 @@
     created() {
       let self = this;
       axios.interceptors.request.use((config) => {
+        self.numLoadings++;
         if (auth.isAuthenticated) {
           Object.assign(config.headers, auth.header);
         }
         return config;
       });
-      axios.interceptors.response.use((config) => config, error => {
+      axios.interceptors.response.use((config) => {
+        self.numLoadings--;
+        return config;
+      }, error => {
         if (error.response.status === 401) {
           auth.accessToken = null;
           self.$router.push({name: 'login'});
@@ -132,12 +146,11 @@
     background-color: #424242;
   }
 
-  .page-placeholder {
-    display: flex;
-    flex-direction: column;
-  }
-
   .page-placeholder > div {
     flex-grow: 1;
+  }
+
+  .mdl-mega-footer__bottom-section_right > .mdl-logo {
+    float: right;
   }
 </style>
