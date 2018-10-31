@@ -12,7 +12,7 @@ describe('object-list.vue', () => {
   };
   let wrapper;
   test('рендер', () => {
-    expect(wrapper.find('h2').text()).toEqual('Параметры фильтрации');
+    expect(wrapper.find('h2').text()).toEqual('Параметры поиска');
   });
   test('если нет параметра маршрута нет выставленых галочек', () => {
     expect(wrapper.vm.$route.params.type).toBeUndefined();

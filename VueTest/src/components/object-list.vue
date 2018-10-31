@@ -136,7 +136,7 @@
         if (this.rooms.length > 0 && this.rooms.length < 4) {
           filter.push('(' + this.rooms.map(j => `RealEstateObject/Rooms eq ${j}`).join(' or ') + ')');
         }
-        if (this.priceFrom !== null && this.priceFrom !== '') {
+        if (this.priceFrom !== null && this.priceFrom !== '' && this.priceFrom != 0) {
           filter.push(`(Price ge ${this.priceFrom})`);
         }
         if (this.priceTo !== null && this.priceTo !== '') {
