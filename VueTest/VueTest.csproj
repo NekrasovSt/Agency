@@ -72,4 +72,16 @@
     <_ContentIncludedByDefault Remove="wwwroot\static\js\vendor.2420502e2b2c7f321d64.js.map" />
   </ItemGroup>
 
+  <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
+
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="wwwroot\**; wwwroot\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using Agency.Web.Models;
 using Agency.Web.Utils;
 using Microsoft.AspNet.OData.Extensions;
@@ -21,7 +22,7 @@ namespace Agency.Web
     public Startup(IHostingEnvironment env)
     {
       var builder = new ConfigurationBuilder()
-        .SetBasePath(env.ContentRootPath)
+        .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "settings"))
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
         .AddEnvironmentVariables();
